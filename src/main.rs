@@ -11,6 +11,7 @@ mod model;
 mod service;
 
 use common::health_controller;
+use biz::contents::contents_controller;
 
 #[launch]
 async fn rocket() -> _ {
@@ -22,6 +23,9 @@ fn build_rocket() -> Rocket<Build> {
         .mount("/actuator", routes![
             health_controller::health,
             health_controller::liveness
+        ])
+        .mount("/fortune/contents", routes![
+            contents_controller::tree
         ])
 }
 
