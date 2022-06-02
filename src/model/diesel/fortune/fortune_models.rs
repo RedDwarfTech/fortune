@@ -6,8 +6,7 @@
 use rocket::serde::Serialize;
 use serde::Deserialize;
 use crate::model::diesel::fortune::fortune_schema::*;
-use crate::model::response::contents::fortune_contents_response::FortuneContentResponse;
-use crate::service::contents::convert_to_tree::IntoTree;
+
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
 #[table_name = "fortune_contents"]
@@ -23,30 +22,5 @@ pub struct FortuneContent {
     pub sort: i32,
 }
 
-impl IntoTree for &FortuneContent {
-    type Output = FortuneContentResponse;
 
-    fn get_id(&self) -> i32 {
-        self.id
-    }
-
-    fn get_parent_id(&self) -> i32 {
-        self.parent_id
-    }
-
-    fn convert(&self, children: Vec<Self::Output>) -> Self::Output {
-        FortuneContentResponse {
-            id: self.id,
-            parent_id: 0,
-            created_time: 0,
-            updated_time: 0,
-            name: "".to_string(),
-            contents_type: 0,
-            deleted: 0,
-            hidden: 0,
-            children,
-            sort: 0
-        }
-    }
-}
 

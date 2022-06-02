@@ -16,7 +16,32 @@ pub struct FortuneContentResponse {
     pub children: Vec<FortuneContentResponse>,
 }
 
+impl IntoTree for &FortuneContent {
+    type Output = FortuneContentResponse;
 
+    fn get_id(&self) -> i32 {
+        self.id
+    }
+
+    fn get_parent_id(&self) -> i32 {
+        self.parent_id
+    }
+
+    fn convert(&self, children: Vec<Self::Output>) -> Self::Output {
+        FortuneContentResponse {
+            id: self.id,
+            parent_id: self.parent_id,
+            created_time: self.created_time,
+            updated_time: self.updated_time,
+            name: self.name.to_string(),
+            contents_type: self.contents_type,
+            deleted: self.deleted,
+            hidden: self.hidden,
+            children,
+            sort: self.sort
+        }
+    }
+}
 
 
 
