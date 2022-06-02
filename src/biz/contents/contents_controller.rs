@@ -8,7 +8,7 @@ use crate::service::contents::contents_service::content_tree_query;
 #[get("/v1/tree?<contents_type>")]
 pub fn tree(contents_type: i32) -> content::RawJson<String> {
     let contents = content_tree_query::<Vec<FortuneContent>>(contents_type);
-    return box_rest_response("users");
+    return box_rest_response(contents);
 }
 
 
