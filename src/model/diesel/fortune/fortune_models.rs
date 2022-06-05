@@ -7,6 +7,17 @@ use rocket::serde::Serialize;
 use serde::Deserialize;
 use crate::model::diesel::fortune::fortune_schema::*;
 
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[table_name = "bill_record"]
+pub struct BillRecord {
+    pub id: i64,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub deleted: i32,
+    pub user_id: i64,
+    pub contents_id: i32,
+    pub remark: Option<String>,
+}
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
 #[table_name = "fortune_contents"]
@@ -20,7 +31,18 @@ pub struct FortuneContent {
     pub deleted: i32,
     pub hidden: i32,
     pub sort: i32,
+    pub contents_source: Option<i32>,
 }
 
-
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[table_name = "fortune_user_contents"]
+pub struct FortuneUserContent {
+    pub id: i64,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub deleted: i32,
+    pub sort: i32,
+    pub user_id: i64,
+    pub contents_id: i32,
+}
 

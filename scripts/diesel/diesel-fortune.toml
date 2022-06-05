@@ -6,6 +6,8 @@ with_docs = false
 
 # This will cause only the users and posts tables to be output
 filter = { only_tables = [
-    "fortune_contents"
+    "fortune_contents",
+    "fortune_user_contents",
+    "bill_record"
 ] }
 

@@ -1,6 +1,6 @@
+use rust_wheel::common::util::convert_to_tree::IntoTree;
 use serde::Serialize;
 use crate::model::diesel::fortune::fortune_models::FortuneContent;
-use crate::service::contents::convert_to_tree::IntoTree;
 
 #[derive(Debug, Serialize)]
 pub struct FortuneContentResponse {
