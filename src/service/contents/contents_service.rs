@@ -1,5 +1,5 @@
 use diesel::{BoolExpressionMethods, PgConnection, QueryDsl, RunQueryDsl};
-use diesel::dsl::any;
+use diesel::dsl::{any, not};
 use rocket::serde::json::serde_json;
 use rust_wheel::common::util::convert_to_tree::convert_to_tree;
 use rust_wheel::config::db::config;
@@ -51,6 +51,9 @@ pub fn get_user_content_ids(login_user_info: &LoginUserInfo) -> Vec<i32> {
 }
 
 pub fn get_own_content(filter_content_type: &i32, contents_ids: &Vec<i32>,) -> Vec<FortuneContent>{
+    if contents_ids.is_empty() {
+        return Vec::new();
+    }
     use crate::model::diesel::fortune::fortune_schema::fortune_contents::dsl::*;
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let predicate = contents_type.eq(filter_content_type)
@@ -69,7 +72,7 @@ pub fn get_available_content(contents_ids: &Vec<i32>, filter_content_type: &i32)
     use crate::model::diesel::fortune::fortune_schema::fortune_contents::dsl::*;
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let predicate = contents_type.eq(filter_content_type)
-        .and(crate::model::diesel::fortune::fortune_schema::fortune_contents::dsl::id.ne(any(contents_ids)))
+        .and(not(id.eq(any(contents_ids))))
         .and(contents_source.eq(1));
     let contents = fortune_contents.filter(&predicate)
         .load::<FortuneContent>(&connection)
