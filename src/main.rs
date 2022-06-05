@@ -25,7 +25,8 @@ fn build_rocket() -> Rocket<Build> {
             health_controller::liveness
         ])
         .mount("/fortune/contents", routes![
-            contents_controller::tree
+            contents_controller::tree,
+            contents_controller::fetch_available_contents
         ])
 }
 

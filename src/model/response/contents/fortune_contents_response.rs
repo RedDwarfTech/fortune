@@ -13,8 +13,7 @@ pub struct FortuneContentResponse {
     pub deleted: i32,
     pub hidden: i32,
     pub sort: i32,
-    pub children: Vec<FortuneContentResponse>,
-    pub available: Vec<FortuneContent>
+    pub children: Vec<FortuneContentResponse>
 }
 
 impl IntoTree for &FortuneContent {
@@ -40,7 +39,6 @@ impl IntoTree for &FortuneContent {
             hidden: self.hidden,
             children,
             sort: self.sort,
-            available: vec![]
         }
     }
 }
