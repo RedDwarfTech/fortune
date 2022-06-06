@@ -8,6 +8,7 @@ with_docs = false
 filter = { only_tables = [
     "fortune_contents",
     "fortune_user_contents",
-    "bill_record"
+    "bill_record",
+    "bill_book_template"
 ] }
 
