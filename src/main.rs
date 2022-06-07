@@ -13,6 +13,7 @@ mod service;
 use common::health_controller;
 use biz::contents::contents_controller;
 use biz::template::bill_book_template_controller;
+use biz::bill::bill_controller;
 
 #[launch]
 async fn rocket() -> _ {
@@ -32,6 +33,9 @@ fn build_rocket() -> Rocket<Build> {
         ])
         .mount("/fortune/template", routes![
             bill_book_template_controller::list,
+        ])
+        .mount("/fortune/bill", routes![
+            bill_controller::add,
         ])
     
 }

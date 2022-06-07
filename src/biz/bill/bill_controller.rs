@@ -7,13 +7,14 @@ https://stackoverflow.com/questions/61077692/how-can-i-fix-unused-imports-in-rus
 **/
 
 use rocket::response::content;
+use rocket::serde::json::Json;
 use rust_wheel::common::util::model_convert::box_rest_response;
 
 use crate::service::bill::bill_service::add_bill;
 use crate::model::request::bill::bill_request::BillRequest;
 
-#[get("/v1/add")]
-pub fn list(request: Json<BillRequest>) -> content::RawJson<String> {
+#[post("/v1/add", data = "<request>")]
+pub fn add(request: Json<BillRequest>) -> content::RawJson<String> {
     let contents = add_bill(request);
     return box_rest_response(contents);
 }
