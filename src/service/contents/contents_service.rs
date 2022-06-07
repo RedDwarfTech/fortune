@@ -1,6 +1,5 @@
-use diesel::{BoolExpressionMethods, PgConnection, QueryDsl, RunQueryDsl};
+use diesel::{BoolExpressionMethods, QueryDsl, RunQueryDsl};
 use diesel::dsl::{any, not};
-use rocket::serde::json::serde_json;
 use rust_wheel::common::util::convert_to_tree::convert_to_tree;
 use rust_wheel::config::db::config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
