@@ -33,7 +33,6 @@ fn build_rocket() -> Rocket<Build> {
         .mount("/fortune/template", routes![
             bill_book_template_controller::list,
         ])
-        
-
+    
 }
 
