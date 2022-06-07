@@ -12,6 +12,7 @@ mod service;
 
 use common::health_controller;
 use biz::contents::contents_controller;
+use biz::template::bill_book_template_controller;
 
 #[launch]
 async fn rocket() -> _ {
@@ -27,6 +28,9 @@ fn build_rocket() -> Rocket<Build> {
         .mount("/fortune/contents", routes![
             contents_controller::tree,
             contents_controller::fetch_available_contents
+        ])
+        .mount("/fortune/template",routes![
+            bill_book_template_controller::list
         ])
 }
 
