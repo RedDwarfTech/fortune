@@ -10,10 +10,16 @@ mod biz;
 mod model;
 mod service;
 
+use rocket_okapi::{openapi, openapi_get_routes, rapidoc::*, swagger_ui::*};
+use rocket_okapi::okapi::schemars;
+use rocket_okapi::okapi::schemars::JsonSchema;
+use rocket_okapi::settings::UrlObject;
+
 use common::health_controller;
 use biz::contents::contents_controller;
 use biz::template::bill_book_template_controller;
 use biz::bill::bill_controller;
+
 
 #[launch]
 async fn rocket() -> _ {
@@ -37,6 +43,13 @@ fn build_rocket() -> Rocket<Build> {
         .mount("/fortune/bill", routes![
             bill_controller::add,
         ])
+        .mount(
+            "/swagger-ui/",
+            make_swagger_ui(&SwaggerUIConfig {
+                url: "../openapi.json".to_owned(),
+                ..Default::default()
+            }),
+        )
     
 }
 
