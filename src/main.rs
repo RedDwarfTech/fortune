@@ -22,6 +22,7 @@ use common::health_controller;
 use biz::contents::contents_controller;
 use biz::template::bill_book_template_controller;
 use biz::bill::bill_controller;
+use biz::bill::bill_book_controller;
 
 
 #[rocket::main]
@@ -67,6 +68,9 @@ pub fn create_server() -> Rocket<Build> {
         //"/external" => custom_route_spec,
         "/health" => health_controller::get_routes_and_docs(&openapi_settings),
         "/template" => bill_book_template_controller::get_routes_and_docs(&openapi_settings),
+        "/contents" => contents_controller::get_routes_and_docs(&openapi_settings),
+        "/bill" => bill_controller::get_routes_and_docs(&openapi_settings),
+        "/bill-book" => bill_book_controller::get_routes_and_docs(&openapi_settings),
         //"/message" => message::get_routes_and_docs(&openapi_settings),
     };
 
@@ -157,7 +161,6 @@ fn build_rocket() -> Rocket<Build> {
         .mount(
             "/",
             openapi_get_routes![
-                bill_controller::get_all_users,
                 bill_controller::add
             ],
         )
