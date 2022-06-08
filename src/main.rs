@@ -35,7 +35,7 @@ pub fn create_server() -> Rocket<Build> {
         .mount(
             "/swagger-ui/",
             make_swagger_ui(&SwaggerUIConfig {
-                url: "../v1/openapi.json".to_owned(),
+                url: "../fortune/openapi.json".to_owned(),
                 ..Default::default()
             }),
         )

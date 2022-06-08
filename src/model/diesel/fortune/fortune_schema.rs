@@ -1,4 +1,17 @@
 table! {
+    bill_book (id) {
+        id -> Int8,
+        created_time -> Int8,
+        updated_time -> Int8,
+        deleted -> Int4,
+        creator -> Int8,
+        bill_book_template_id -> Int4,
+        remark -> Nullable<Varchar>,
+        contents -> Nullable<Varchar>,
+    }
+}
+
+table! {
     bill_book_template (id) {
         id -> Int4,
         created_time -> Int8,
@@ -43,6 +56,7 @@ table! {
 }
 
 allow_tables_to_appear_in_same_query!(
+    bill_book,
     bill_book_template,
     bill_record,
     fortune_contents,
