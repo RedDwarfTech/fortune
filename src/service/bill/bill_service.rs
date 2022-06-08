@@ -4,7 +4,7 @@ use rust_wheel::config::db::config;
 
 use crate::model::{request::bill::bill_request::BillRequest, diesel::fortune::fortune_custom_models::BillRecordAdd};
 
-pub fn add_bill(request: Json<BillRequest>){
+pub fn add_bill(_request: Json<BillRequest>){
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let bill_record_add = BillRecordAdd{
         created_time: todo!(),

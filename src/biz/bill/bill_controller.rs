@@ -14,9 +14,6 @@ use rust_wheel::common::util::model_convert::box_rest_response;
 use crate::service::bill::bill_service::add_bill;
 use crate::model::request::bill::bill_request::BillRequest;
 use rocket_okapi::{openapi, openapi_get_routes_spec};
-use serde::{Deserialize, Serialize};
-use rocket_okapi::okapi::schemars;
-use rocket_okapi::okapi::schemars::JsonSchema;
 use rocket_okapi::settings::OpenApiSettings;
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
