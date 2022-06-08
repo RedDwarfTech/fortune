@@ -5,7 +5,7 @@ use rust_wheel::config::db::config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 use crate::model::diesel::fortune::fortune_custom_models::{BillBookAdd, BillRecordAdd};
 
-use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookTemplate};
+use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookTemplate, BillRecord};
 use crate::model::request::bill::bill_book_request::BillBookRequest;
 
 pub fn get_template_list() -> Vec<BillBookTemplate> {
@@ -17,7 +17,7 @@ pub fn get_template_list() -> Vec<BillBookTemplate> {
     return templates;
 }
 
-pub fn add_bill_book(request: &Json<BillBookRequest>, login_user_info: &LoginUserInfo) {
+pub fn add_bill_book(request:&Json<BillBookRequest>, login_user_info: &LoginUserInfo) -> BillBook {
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let bill_book_record = BillBookAdd{
         created_time: get_current_millisecond(),
@@ -28,9 +28,12 @@ pub fn add_bill_book(request: &Json<BillBookRequest>, login_user_info: &LoginUse
         bill_book_template_id: request.billBookTemplateId,
         contents: None
     };
-    diesel::insert_into(crate::model::diesel::fortune::fortune_schema::bill_book::table)
+    let inserted_record = diesel::insert_into(crate::model::diesel::fortune::fortune_schema::bill_book::table)
         .values(&bill_book_record)
         .on_conflict_do_nothing()
-        .execute(&connection)
-        .unwrap();
+        .get_results::<BillBook>(&connection);
+    let records = inserted_record.unwrap();
+    // 使用to_owned()表示重新拷贝了一份数据，和重新构建一个String出来别无二致
+    let r = records.get(0).unwrap().to_owned();
+    return r;
 }

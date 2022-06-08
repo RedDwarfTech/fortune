@@ -30,6 +30,6 @@ pub fn list() -> content::RawJson<String> {
 #[openapi(tag = "账本")]
 #[put("/v1/add", data = "<request>")]
 pub fn add(request: Json<BillBookRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
-    add_bill_book(&request, &login_user_info);
-    return box_rest_response("ok");
+    let bill_book = add_bill_book(&request, &login_user_info);
+    return box_rest_response(bill_book);
 }
