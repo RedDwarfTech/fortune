@@ -26,6 +26,5 @@ pub struct BillRecordAdd {
     pub updated_time: i64,
     pub deleted: i32,
     pub user_id: i64,
-    pub contents_id: i32,
     pub remark: Option<String>,
 }

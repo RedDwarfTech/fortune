@@ -11,7 +11,6 @@ pub fn add_bill(_request: Json<BillRequest>){
         updated_time: todo!(),
         deleted: todo!(),
         user_id: todo!(),
-        contents_id: todo!(),
         remark: todo!(),
     };
     diesel::insert_into(crate::model::diesel::fortune::fortune_schema::bill_record::table)

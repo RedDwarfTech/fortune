@@ -3,10 +3,7 @@ use diesel::dsl::{any, not};
 use rust_wheel::common::util::convert_to_tree::convert_to_tree;
 use rust_wheel::config::db::config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
-use crate::model::diesel::fortune::fortune_models::{FortuneContent, FortuneUserContent};
 use crate::diesel::ExpressionMethods;
-use crate::model::response::contents::edit_contents_response::EditContentResponse;
-use crate::model::response::contents::fortune_contents_response::FortuneContentResponse;
 
 ///
 /// 每个用户看到的菜单都不一样
@@ -17,76 +14,6 @@ use crate::model::response::contents::fortune_contents_response::FortuneContentR
 /// 后期用户可以在界面上进行区分
 /// 会显示2个区域，一个是已经有的记账类型，一个是目前可以加入的记账类型
 ///
-pub fn content_tree_query<T>(filter_content_type: i32, login_user_info: LoginUserInfo) -> Vec<FortuneContentResponse> {
-    let contents_ids = get_user_content_ids(&login_user_info);
-    let contents = get_own_content(&filter_content_type,&contents_ids);
-    return convert_to_tree_impl(&contents);
+pub fn content_tree_query<T>(filter_content_type: i32, login_user_info: LoginUserInfo) {
+
 }
-
-pub fn available_contents_query(filter_content_type: i32, login_user_info: LoginUserInfo) -> EditContentResponse {
-    let contents_ids = get_user_content_ids(&login_user_info);
-    let available = get_available_content(&contents_ids,&filter_content_type);
-    let contents = get_own_content(&filter_content_type,&contents_ids);
-    let edit_contents_response = EditContentResponse{
-        own: contents,
-        available
-    };
-    return edit_contents_response;
-}
-
-pub fn get_user_content_ids(login_user_info: &LoginUserInfo) -> Vec<i32> {
-    use crate::model::diesel::fortune::fortune_schema::fortune_user_contents::dsl::*;
-    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
-    let user_contents = fortune_user_contents.filter(user_id.eq(login_user_info.userId))
-        .load::<FortuneUserContent>(&connection)
-        .expect("error get user contents");
-    if user_contents.is_empty() {
-        return Vec::new();
-    }
-    let contents_ids: Vec<i32> = user_contents.iter()
-        .map(|item| item.contents_id)
-        .collect();
-    return contents_ids;
-}
-
-pub fn get_own_content(filter_content_type: &i32, contents_ids: &Vec<i32>,) -> Vec<FortuneContent>{
-    if contents_ids.is_empty() {
-        return Vec::new();
-    }
-    use crate::model::diesel::fortune::fortune_schema::fortune_contents::dsl::*;
-    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
-    let predicate = contents_type.eq(filter_content_type)
-        .and(crate::model::diesel::fortune::fortune_schema::fortune_contents::dsl::id.eq(any(contents_ids)));
-    let contents = fortune_contents.filter(&predicate)
-        .load::<FortuneContent>(&connection)
-        .expect("Error fortune contents resource");
-    return contents;
-}
-
-
-///
-/// 获取可以加入用户账单分类的类型
-///
-pub fn get_available_content(contents_ids: &Vec<i32>, filter_content_type: &i32) -> Vec<FortuneContent>{
-    use crate::model::diesel::fortune::fortune_schema::fortune_contents::dsl::*;
-    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
-    let predicate = contents_type.eq(filter_content_type)
-        .and(not(id.eq(any(contents_ids))))
-        .and(contents_source.eq(1));
-    let contents = fortune_contents.filter(&predicate)
-        .load::<FortuneContent>(&connection)
-        .expect("Error fortune contents resource");
-    return contents;
-}
-
-pub fn convert_to_tree_impl(contents: &Vec<FortuneContent>) -> Vec<FortuneContentResponse> {
-    let root_element: Vec<_> = contents.iter()
-        .filter(|content| content.parent_id == 0)
-        .collect();
-    let sub_element: Vec<_> = contents.iter()
-        .filter(|content| content.parent_id != 0)
-        .collect();
-    let result = convert_to_tree(&root_element, &sub_element);
-    return result;
-}
-
