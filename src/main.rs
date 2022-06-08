@@ -59,13 +59,13 @@ pub fn create_server() -> Rocket<Build> {
     let openapi_settings = rocket_okapi::settings::OpenApiSettings::default();
     //let custom_route_spec = (vec![], custom_openapi_spec());
     mount_endpoints_and_merged_docs! {
-        building_rocket, "/v1".to_owned(), openapi_settings,
+        building_rocket, "/fortune".to_owned(), openapi_settings,
         //"/external" => custom_route_spec,
-        "/fortune/actuator" => health_controller::get_routes_and_docs(&openapi_settings),
-        "/fortune/template" => bill_book_template_controller::get_routes_and_docs(&openapi_settings),
-        "/fortune/contents" => contents_controller::get_routes_and_docs(&openapi_settings),
-        "/fortune/bill" => bill_controller::get_routes_and_docs(&openapi_settings),
-        "/fortune/bill-book" => bill_book_controller::get_routes_and_docs(&openapi_settings),
+        "/actuator" => health_controller::get_routes_and_docs(&openapi_settings),
+        "/template" => bill_book_template_controller::get_routes_and_docs(&openapi_settings),
+        "/contents" => contents_controller::get_routes_and_docs(&openapi_settings),
+        "/bill" => bill_controller::get_routes_and_docs(&openapi_settings),
+        "/bill-book" => bill_book_controller::get_routes_and_docs(&openapi_settings),
         //"/message" => message::get_routes_and_docs(&openapi_settings),
     };
 

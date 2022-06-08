@@ -21,7 +21,7 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 }
 
 #[openapi(tag = "账单流水")]
-#[post("/add", data = "<request>")]
+#[post("/v1/add", data = "<request>")]
 pub fn add(request: Json<BillRequest>) -> content::RawJson<String> {
     let contents = add_bill(request);
     return box_rest_response(contents);

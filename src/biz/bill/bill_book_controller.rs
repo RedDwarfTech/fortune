@@ -18,7 +18,7 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 }
 
 #[openapi(tag = "账本")]
-#[get("/list")]
+#[get("/v1/list")]
 pub fn list() -> content::RawJson<String> {
     let contents = get_template_list();
     return box_rest_response(contents);
