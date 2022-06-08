@@ -1,3 +1,4 @@
+use okapi::openapi3::OpenApi;
 /**
 To make the clion show unused imports
 
@@ -10,8 +11,15 @@ use rocket::response::content;
 use rust_wheel::common::util::model_convert::box_rest_response;
 
 use crate::service::template::bill_book_template_service::get_template_list;
+use rocket_okapi::{openapi, openapi_get_routes_spec};
+use rocket_okapi::settings::OpenApiSettings;
 
-#[get("/v1/list")]
+pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
+    openapi_get_routes_spec![settings: list]
+}
+
+#[openapi(tag = "账本模版")]
+#[get("/list")]
 pub fn list() -> content::RawJson<String> {
     let contents = get_template_list();
     return box_rest_response(contents);
