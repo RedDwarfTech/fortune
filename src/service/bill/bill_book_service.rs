@@ -1,5 +1,5 @@
-use diesel::{ExpressionMethods, RunQueryDsl};
-use diesel::query_dsl::filter_dsl::FilterDsl;
+use rocket::futures::StreamExt;
+use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
 use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::config::db::config;
@@ -7,6 +7,7 @@ use rust_wheel::model::user::login_user_info::LoginUserInfo;
 use crate::model::diesel::fortune::fortune_custom_models::{BillBookAdd, BillRecordAdd};
 
 use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookTemplate, BillRecord};
+use crate::model::diesel::fortune::fortune_schema::bill_book::creator;
 use crate::model::request::bill::bill_book_request::BillBookRequest;
 
 pub fn get_template_list() -> Vec<BillBookTemplate> {
@@ -29,11 +30,26 @@ fn get_template_list_by_id(template_id: i32) -> Vec<BillBookTemplate>{
     return templates;
 }
 
+fn get_template_list_count_by_user_id(filter_user_id: &i64) -> i64{
+    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
+    use crate::model::diesel::fortune::fortune_schema::bill_book::dsl::*;
+    let predicate = creator.eq(filter_user_id);
+    let templates_count = bill_book
+        .filter(predicate)
+        .count()
+        .get_result(&connection);
+    return templates_count.unwrap_or(0);
+}
+
 pub fn add_bill_book(request:&Json<BillBookRequest>, login_user_info: &LoginUserInfo) -> Result<BillBook,String> {
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let templates = get_template_list_by_id(request.billBookTemplateId);
     if templates.is_empty() {
-        return Err("the template did not exists".parse().unwrap());
+        return Err("the template did not exists, check your template id first".parse().unwrap());
+    }
+    let templates_count = get_template_list_count_by_user_id(&login_user_info.userId);
+    if templates_count >= 2 {
+        return Err("2 bill book for every user".parse().unwrap());
     }
     let bill_book_record = BillBookAdd{
         created_time: get_current_millisecond(),
