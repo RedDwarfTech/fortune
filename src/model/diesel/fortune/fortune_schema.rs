@@ -6,8 +6,7 @@ table! {
         deleted -> Int4,
         creator -> Int8,
         bill_book_template_id -> Int4,
-        remark -> Nullable<Varchar>,
-        contents -> Nullable<Varchar>,
+        name -> Nullable<Varchar>,
     }
 }
 

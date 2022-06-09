@@ -1,5 +1,5 @@
 use rocket::futures::StreamExt;
-use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl};
+use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl, TextExpressionMethods};
 use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::config::db::config;
@@ -10,13 +10,18 @@ use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookTemplate, 
 use crate::model::diesel::fortune::fortune_schema::bill_book::creator;
 use crate::model::request::bill::bill_book_request::BillBookRequest;
 
-pub fn get_template_list() -> Vec<BillBookTemplate> {
-    use crate::model::diesel::fortune::fortune_schema::bill_book_template::dsl::*;
+pub fn get_bill_book_list(filter_name: Option<String>,login_user_info: &LoginUserInfo) -> Vec<BillBook> {
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
-    let templates = bill_book_template
-        .load::<BillBookTemplate>(&connection)
-        .expect("error get user contents");
-    return templates;
+    use crate::model::diesel::fortune::fortune_schema::bill_book as bill_book_table;
+    let mut query = bill_book_table::table.into_boxed::<diesel::pg::Pg>();
+    if let Some(some_filter_name) = &filter_name {
+        query = query.filter(bill_book_table::name.like(format!("{}{}{}","%",some_filter_name.as_str(),"%")));
+    }
+    query = query.filter(bill_book_table::creator.eq(login_user_info.userId));
+    let user_bill_books = query
+        .load::<BillBook>(&connection)
+        .expect("error get user bill book");
+    return user_bill_books;
 }
 
 fn get_template_list_by_id(template_id: i32) -> Vec<BillBookTemplate>{
@@ -56,9 +61,8 @@ pub fn add_bill_book(request:&Json<BillBookRequest>, login_user_info: &LoginUser
         updated_time: get_current_millisecond(),
         deleted: 0,
         creator: login_user_info.userId,
-        remark: None,
-        bill_book_template_id: request.billBookTemplateId,
-        contents: None
+        name: templates.get(0).unwrap().to_owned().name,
+        bill_book_template_id: request.billBookTemplateId
     };
     let inserted_record = diesel::insert_into(crate::model::diesel::fortune::fortune_schema::bill_book::table)
         .values(&bill_book_record)

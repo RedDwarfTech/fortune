@@ -37,6 +37,5 @@ pub struct BillBookAdd {
     pub deleted: i32,
     pub creator: i64,
     pub bill_book_template_id: i32,
-    pub remark: Option<String>,
-    pub contents: Option<String>,
+    pub name: String
 }
