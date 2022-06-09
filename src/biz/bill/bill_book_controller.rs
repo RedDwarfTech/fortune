@@ -17,7 +17,7 @@ use crate::model::request::bill::bill_book_request::BillBookRequest;
 use crate::service::bill::bill_book_service::{add_bill_book, get_template_list};
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
-    openapi_get_routes_spec![settings: list]
+    openapi_get_routes_spec![settings: list, add]
 }
 
 #[openapi(tag = "账本")]
@@ -27,6 +27,9 @@ pub fn list() -> content::RawJson<String> {
     return box_rest_response(contents);
 }
 
+/// # 新增账本
+///
+/// 新增不同类型的账本
 #[openapi(tag = "账本")]
 #[put("/v1/add", data = "<request>")]
 pub fn add(request: Json<BillBookRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {

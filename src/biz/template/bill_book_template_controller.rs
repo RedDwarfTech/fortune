@@ -18,6 +18,9 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
     openapi_get_routes_spec![settings: list]
 }
 
+/// # 查询账本模版列表
+///
+/// 返回不同类型的账本模版列表
 #[openapi(tag = "账本模版")]
 #[get("/v1/list?<template_type>&<name>")]
 pub fn list(template_type: i32, name: Option<String>) -> content::RawJson<String> {

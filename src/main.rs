@@ -22,6 +22,9 @@ use biz::bill::bill_book_controller;
 
 #[rocket::main]
 async fn main() {
+    // the performance about rocket and Actix
+    // https://www.youtube.com/watch?v=GAxxn_oGA0Y
+    // https://stackoverflow.com/questions/72540558/what-is-the-difference-about-rocket-launch-and-main-entrypoint
     // https://github.com/GREsau/okapi/issues/99
     let launch_result = create_server().launch().await;
     match launch_result {
