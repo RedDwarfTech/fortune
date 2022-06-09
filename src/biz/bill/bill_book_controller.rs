@@ -34,5 +34,9 @@ pub fn list() -> content::RawJson<String> {
 #[put("/v1/add", data = "<request>")]
 pub fn add(request: Json<BillBookRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let bill_book = add_bill_book(&request, &login_user_info);
-    return box_rest_response(bill_book);
+    return if bill_book.as_ref().unwrap_err().is_empty() {
+        box_rest_response(bill_book.unwrap())
+    } else {
+        box_rest_response(bill_book.unwrap_err())
+    }
 }

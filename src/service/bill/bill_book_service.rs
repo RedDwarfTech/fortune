@@ -1,4 +1,5 @@
-use diesel::RunQueryDsl;
+use diesel::{ExpressionMethods, RunQueryDsl};
+use diesel::query_dsl::filter_dsl::FilterDsl;
 use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::config::db::config;
@@ -17,8 +18,23 @@ pub fn get_template_list() -> Vec<BillBookTemplate> {
     return templates;
 }
 
-pub fn add_bill_book(request:&Json<BillBookRequest>, login_user_info: &LoginUserInfo) -> BillBook {
+fn get_template_list_by_id(template_id: i32) -> Vec<BillBookTemplate>{
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
+    use crate::model::diesel::fortune::fortune_schema::bill_book_template::dsl::*;
+    let predicate = id.eq(template_id);
+    let templates = bill_book_template
+        .filter(predicate)
+        .load::<BillBookTemplate>(&connection)
+        .expect("error get user contents");
+    return templates;
+}
+
+pub fn add_bill_book(request:&Json<BillBookRequest>, login_user_info: &LoginUserInfo) -> Result<BillBook,String> {
+    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
+    let templates = get_template_list_by_id(request.billBookTemplateId);
+    if templates.is_empty() {
+        return Err("the template did not exists".parse().unwrap());
+    }
     let bill_book_record = BillBookAdd{
         created_time: get_current_millisecond(),
         updated_time: get_current_millisecond(),
@@ -35,5 +51,5 @@ pub fn add_bill_book(request:&Json<BillBookRequest>, login_user_info: &LoginUser
     let records = inserted_record.unwrap();
     // 使用to_owned()表示重新拷贝了一份数据，和重新构建一个String出来别无二致
     let r = records.get(0).unwrap().to_owned();
-    return r;
+    return Ok(r);
 }
