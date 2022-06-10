@@ -5,8 +5,8 @@ table! {
         updated_time -> Int8,
         deleted -> Int4,
         creator -> Int8,
-        bill_book_template_id -> Int4,
-        name -> Nullable<Varchar>,
+        bill_book_template_id -> Int8,
+        name -> Varchar,
         contents -> Varchar,
     }
 }
@@ -18,9 +18,12 @@ table! {
         updated_time -> Int8,
         deleted -> Int4,
         creator -> Int8,
-        bill_book_id -> Int4,
-        name -> Nullable<Varchar>,
+        bill_book_id -> Int8,
+        name -> Varchar,
         contents -> Varchar,
+        content_id -> Int8,
+        parent_id -> Int8,
+        contents_type -> Int4,
     }
 }
 
@@ -46,8 +49,8 @@ table! {
 
 table! {
     bill_book_template_contents (id) {
-        id -> Int4,
-        parent_id -> Int4,
+        id -> Int8,
+        parent_id -> Int8,
         created_time -> Int8,
         updated_time -> Int8,
         name -> Varchar,
@@ -56,7 +59,7 @@ table! {
         hidden -> Int4,
         sort -> Int4,
         contents_source -> Int4,
-        bill_book_template_id -> Int4,
+        bill_book_template_id -> Int8,
     }
 }
 

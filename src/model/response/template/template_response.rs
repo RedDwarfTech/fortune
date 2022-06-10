@@ -3,7 +3,7 @@ use crate::model::diesel::fortune::fortune_models::BillBookTemplate;
 
 #[derive(Debug, Serialize, Default)]
 pub struct TemplateResponse {
-    pub id: i32,
+    pub id: i64,
     pub name: String,
     pub tags: String,
     pub slogan: String,

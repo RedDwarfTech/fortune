@@ -7,5 +7,5 @@ use rocket_okapi::okapi::schemars;
 #[allow(non_snake_case)]
 pub struct TemplateDetailRequest {
     /// 账本模版ID
-    pub id: i32,
+    pub id: i64,
 }

@@ -4,9 +4,9 @@ use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::config::db::config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
-use crate::model::diesel::fortune::fortune_custom_models::{BillBookAdd, BillBookTemplateContents, BillRecordAdd};
+use crate::model::diesel::fortune::fortune_custom_models::{BillBookAdd, BillBookContentAdd, BillBookTemplateContents, BillRecordAdd};
 
-use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookTemplate, BillRecord};
+use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookContent, BillBookTemplate, BillBookTemplateContent, BillRecord};
 use crate::model::diesel::fortune::fortune_schema::bill_book::creator;
 use crate::model::request::bill::bill_book_request::BillBookRequest;
 
@@ -35,7 +35,7 @@ pub fn get_bill_book_by_id(filter_bill_book_id: &i64) -> BillBook{
     return templates.get(0).unwrap().to_owned();
 }
 
-fn get_template_list_by_id(template_id: i32) -> Vec<BillBookTemplate>{
+fn get_template_list_by_id(template_id: i64) -> Vec<BillBookTemplate>{
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     use crate::model::diesel::fortune::fortune_schema::bill_book_template::dsl::*;
     let predicate = id.eq(template_id);
@@ -101,22 +101,35 @@ fn add_bill_book_impl(login_user_info: &LoginUserInfo, templates: &Vec<BillBookT
 ///
 /// 初始化账本目录数据
 ///
-fn add_bill_book_categories(template_id: i32){
+fn add_bill_book_categories(template_id: i64,input_bill_book_id: i64, login_user_info: &LoginUserInfo){
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     use crate::model::diesel::fortune::fortune_schema::bill_book_template_contents::dsl::*;
     let predicate = id.eq(template_id);
     let categories_record = bill_book_template_contents
         .filter(predicate)
-        .load::<BillBookTemplateContents>(&connection)
+        .load::<BillBookTemplateContent>(&connection)
         .expect("error get categories contents");
-    let bill_book_contents = Vec::new();
+    let mut bill_book_contents:Vec<BillBookContentAdd> = Vec::new();
     for record in categories_record {
-
-
-
+        let bill_book_content = BillBookContentAdd{
+            created_time: get_current_millisecond(),
+            updated_time: get_current_millisecond(),
+            deleted: 0,
+            creator: login_user_info.userId,
+            bill_book_id: input_bill_book_id,
+            name: record.name,
+            contents: "".to_string(),
+            content_id: record.id,
+            parent_id: record.parent_id,
+            contents_type: record.contents_type
+        };
+        bill_book_contents.push(bill_book_content);
     }
-
-
+    diesel::insert_into(crate::model::diesel::fortune::fortune_schema::bill_book_contents::table)
+        .values(&bill_book_contents)
+        .on_conflict_do_nothing()
+        .execute(&connection)
+        .unwrap();
 }
 
 

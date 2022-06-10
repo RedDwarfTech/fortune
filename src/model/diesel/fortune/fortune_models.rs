@@ -15,8 +15,8 @@ pub struct BillBook {
     pub updated_time: i64,
     pub deleted: i32,
     pub creator: i64,
-    pub bill_book_template_id: i32,
-    pub name: Option<String>,
+    pub bill_book_template_id: i64,
+    pub name: String,
     pub contents: String,
 }
 
@@ -28,9 +28,12 @@ pub struct BillBookContent {
     pub updated_time: i64,
     pub deleted: i32,
     pub creator: i64,
-    pub bill_book_id: i32,
-    pub name: Option<String>,
+    pub bill_book_id: i64,
+    pub name: String,
     pub contents: String,
+    pub content_id: i64,
+    pub parent_id: i64,
+    pub contents_type: i32,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
@@ -56,8 +59,8 @@ pub struct BillBookTemplate {
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
 #[table_name = "bill_book_template_contents"]
 pub struct BillBookTemplateContent {
-    pub id: i32,
-    pub parent_id: i32,
+    pub id: i64,
+    pub parent_id: i64,
     pub created_time: i64,
     pub updated_time: i64,
     pub name: String,
@@ -66,7 +69,7 @@ pub struct BillBookTemplateContent {
     pub hidden: i32,
     pub sort: i32,
     pub contents_source: i32,
-    pub bill_book_template_id: i32,
+    pub bill_book_template_id: i64,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]

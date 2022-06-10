@@ -22,7 +22,7 @@ pub fn get_template_list(filter_type: i32, filter_name: Option<String>) -> Vec<T
     return template_results;
 }
 
-pub fn get_template_detail(template_id: i32) -> Result<TemplateResponse,String> {
+pub fn get_template_detail(template_id: i64) -> Result<TemplateResponse,String> {
     use crate::model::diesel::fortune::fortune_schema::bill_book_template as bill_book_template_table;
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let query = bill_book_template_table::table

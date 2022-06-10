@@ -1,11 +1,11 @@
-use rust_wheel::common::util::convert_to_tree::IntoTree;
+use rust_wheel::common::util::convert_to_tree_i64::IntoTree;
 use serde::Serialize;
 use crate::model::diesel::fortune::fortune_custom_models::BillBookTemplateContents;
 
 #[derive(Debug, Serialize)]
 pub struct FortuneContentResponse {
-    pub id: i32,
-    pub parent_id: i32,
+    pub id: i64,
+    pub parent_id: i64,
     pub created_time: i64,
     pub updated_time: i64,
     pub name: String,
@@ -19,11 +19,11 @@ pub struct FortuneContentResponse {
 impl IntoTree for &BillBookTemplateContents {
     type Output = FortuneContentResponse;
 
-    fn get_id(&self) -> i32 {
+    fn get_id(&self) -> i64 {
         self.id
     }
 
-    fn get_parent_id(&self) -> i32 {
+    fn get_parent_id(&self) -> i64 {
         self.parent_id
     }
 
