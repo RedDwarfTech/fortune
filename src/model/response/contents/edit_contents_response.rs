@@ -1,8 +1,8 @@
 use serde::Serialize;
-use crate::model::diesel::fortune::fortune_models::FortuneContent;
+use crate::model::diesel::fortune::fortune_custom_models::BillBookTemplateContents;
 
 #[derive(Debug, Serialize, Default)]
 pub struct EditContentResponse {
-    pub own: Vec<FortuneContent>,
-    pub available: Vec<FortuneContent>
+    pub own: Vec<BillBookTemplateContents>,
+    pub available: Vec<BillBookTemplateContents>
 }

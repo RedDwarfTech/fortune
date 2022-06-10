@@ -6,13 +6,13 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
     openapi_get_routes_spec![settings: health, liveness]
 }
 
-#[openapi(tag = "健康检查")]
+#[openapi(skip)]
 #[get("/health")]
 pub fn health() -> String {
     "OK".to_string()
 }
 
-#[openapi(tag = "健康检查")]
+#[openapi(skip)]
 #[get("/liveness")]
 pub fn liveness() -> String {
     "OK".to_string()

@@ -1,5 +1,5 @@
 use rocket::futures::StreamExt;
-use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl, TextExpressionMethods};
+use diesel::{BoolExpressionMethods, ExpressionMethods, PgConnection, QueryDsl, RunQueryDsl, TextExpressionMethods};
 use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::config::db::config;
@@ -22,6 +22,17 @@ pub fn get_bill_book_list(filter_name: Option<String>,login_user_info: &LoginUse
         .load::<BillBook>(&connection)
         .expect("error get user bill book");
     return user_bill_books;
+}
+
+pub fn get_bill_book_by_id(filter_bill_book_id: &i64) -> BillBook{
+    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
+    use crate::model::diesel::fortune::fortune_schema::bill_book::dsl::*;
+    let predicate = id.eq(filter_bill_book_id);
+    let templates = bill_book
+        .filter(predicate)
+        .load::<BillBook>(&connection)
+        .expect("error get user contents");
+    return templates.get(0).unwrap().to_owned();
 }
 
 fn get_template_list_by_id(template_id: i32) -> Vec<BillBookTemplate>{
@@ -56,6 +67,11 @@ pub fn add_bill_book(request:&Json<BillBookRequest>, login_user_info: &LoginUser
     if templates_count >= 2 {
         return Err("2 bill book for every user".parse().unwrap());
     }
+    return add_bill_book_impl(login_user_info, &templates, request);
+}
+
+fn add_bill_book_impl(login_user_info: &LoginUserInfo, templates: &Vec<BillBookTemplate>, request:&Json<BillBookRequest>) -> Result<BillBook,String>{
+    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let bill_book_record = BillBookAdd{
         created_time: get_current_millisecond(),
         updated_time: get_current_millisecond(),
@@ -73,3 +89,11 @@ pub fn add_bill_book(request:&Json<BillBookRequest>, login_user_info: &LoginUser
     let r = records.get(0).unwrap().to_owned();
     return Ok(r);
 }
+
+fn add_bill_book_categories(){
+
+}
+
+
+
+

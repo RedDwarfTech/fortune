@@ -20,6 +20,9 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
     openapi_get_routes_spec![settings: add]
 }
 
+/// # 新增记账流水
+///
+/// 新增记账流水
 #[openapi(tag = "账单流水")]
 #[post("/v1/add", data = "<request>")]
 pub fn add(request: Json<BillRequest>) -> content::RawJson<String> {

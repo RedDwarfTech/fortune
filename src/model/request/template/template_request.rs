@@ -5,7 +5,9 @@ use rocket_okapi::okapi::schemars;
 
 #[derive(Debug, PartialEq, Eq, Deserialize, Serialize, FromForm, JsonSchema)]
 #[allow(non_snake_case)]
-pub struct ContentsRequest {
-    /// 分类类型
-    contents_type: i32
+pub struct TemplateRequest {
+    /// 账本模版类型
+    pub template_type: i32,
+    /// 账本模版名称
+    pub name: Option<String>
 }

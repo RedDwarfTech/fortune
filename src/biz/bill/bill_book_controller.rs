@@ -14,10 +14,10 @@ use rust_wheel::common::util::model_convert::box_rest_response;
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 use crate::model::request::bill::bill_book_request::BillBookRequest;
-use crate::service::bill::bill_book_service::{add_bill_book, get_bill_book_list};
+use crate::service::bill::bill_book_service::{add_bill_book, get_bill_book_by_id, get_bill_book_list};
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
-    openapi_get_routes_spec![settings: list, add]
+    openapi_get_routes_spec![settings: list, add, detail]
 }
 
 /// # 查询当前用户账本列表
@@ -30,6 +30,16 @@ pub fn list(name: Option<String>, login_user_info: LoginUserInfo) -> content::Ra
     return box_rest_response(contents);
 }
 
+/// # 查询账本详情
+///
+/// 查询账本详情
+#[openapi(tag = "账本")]
+#[get("/v1/detail/<id>")]
+pub fn detail(id: i64) -> content::RawJson<String> {
+    let contents = get_bill_book_by_id(&id);
+    return box_rest_response(contents);
+}
+
 /// # 新增账本
 ///
 /// 新增不同类型的账本
@@ -38,11 +48,12 @@ pub fn list(name: Option<String>, login_user_info: LoginUserInfo) -> content::Ra
 pub fn add(request: Json<BillBookRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let bill_book = add_bill_book(&request, &login_user_info);
     return match bill_book {
-        Ok(_) => {
-            box_rest_response(bill_book.unwrap())
+        Ok(v) => {
+            box_rest_response(v)
         },
-        Err(_) => {
-            box_rest_response(bill_book.unwrap_err())
+        Err(e) => {
+            box_rest_response(e)
         }
     }
 }
+

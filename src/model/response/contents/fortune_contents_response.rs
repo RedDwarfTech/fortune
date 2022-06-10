@@ -1,6 +1,6 @@
 use rust_wheel::common::util::convert_to_tree::IntoTree;
 use serde::Serialize;
-use crate::model::diesel::fortune::fortune_models::FortuneContent;
+use crate::model::diesel::fortune::fortune_custom_models::BillBookTemplateContents;
 
 #[derive(Debug, Serialize)]
 pub struct FortuneContentResponse {
@@ -16,7 +16,7 @@ pub struct FortuneContentResponse {
     pub children: Vec<FortuneContentResponse>
 }
 
-impl IntoTree for &FortuneContent {
+impl IntoTree for &BillBookTemplateContents {
     type Output = FortuneContentResponse;
 
     fn get_id(&self) -> i32 {
