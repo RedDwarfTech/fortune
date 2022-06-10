@@ -4,7 +4,7 @@ use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::config::db::config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
-use crate::model::diesel::fortune::fortune_custom_models::{BillBookAdd, BillRecordAdd};
+use crate::model::diesel::fortune::fortune_custom_models::{BillBookAdd, BillBookTemplateContents, BillRecordAdd};
 
 use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookTemplate, BillRecord};
 use crate::model::diesel::fortune::fortune_schema::bill_book::creator;
@@ -57,6 +57,11 @@ fn get_template_list_count_by_user_id(filter_user_id: &i64) -> i64{
     return templates_count.unwrap_or(0);
 }
 
+///
+/// 新增账本时，除了初始化账本数据
+/// 还要初始化当前账本收入、支出等类型的目录数据
+/// 不同的账本目录可自定义
+///
 pub fn add_bill_book(request:&Json<BillBookRequest>, login_user_info: &LoginUserInfo) -> Result<BillBook,String> {
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let templates = get_template_list_by_id(request.billBookTemplateId);
@@ -70,6 +75,9 @@ pub fn add_bill_book(request:&Json<BillBookRequest>, login_user_info: &LoginUser
     return add_bill_book_impl(login_user_info, &templates, request);
 }
 
+///
+/// 初始化账本数据
+///
 fn add_bill_book_impl(login_user_info: &LoginUserInfo, templates: &Vec<BillBookTemplate>, request:&Json<BillBookRequest>) -> Result<BillBook,String>{
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let bill_book_record = BillBookAdd{
@@ -90,7 +98,24 @@ fn add_bill_book_impl(login_user_info: &LoginUserInfo, templates: &Vec<BillBookT
     return Ok(r);
 }
 
-fn add_bill_book_categories(){
+///
+/// 初始化账本目录数据
+///
+fn add_bill_book_categories(template_id: i32){
+    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
+    use crate::model::diesel::fortune::fortune_schema::bill_book_template_contents::dsl::*;
+    let predicate = id.eq(template_id);
+    let categories_record = bill_book_template_contents
+        .filter(predicate)
+        .load::<BillBookTemplateContents>(&connection)
+        .expect("error get categories contents");
+    let bill_book_contents = Vec::new();
+    for record in categories_record {
+
+
+
+    }
+
 
 }
 

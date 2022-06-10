@@ -3,14 +3,7 @@
 #![allow(unused)]
 #![allow(clippy::all)]
 
-use okapi::openapi3::Responses;
-use rocket::{Request, response, Response};
-use rocket::http::{ContentType, Status};
-use rocket::response::Responder;
-use rocket::serde::json::serde_json;
 use rocket::serde::Serialize;
-use rocket_okapi::gen::OpenApiGenerator;
-use rocket_okapi::response::OpenApiResponderInner;
 use serde::Deserialize;
 use crate::model::diesel::fortune::fortune_schema::*;
 
@@ -28,9 +21,22 @@ pub struct BillBook {
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[table_name = "bill_book_contents"]
+pub struct BillBookContent {
+    pub id: i64,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub deleted: i32,
+    pub creator: i64,
+    pub bill_book_id: i32,
+    pub name: Option<String>,
+    pub contents: String,
+}
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
 #[table_name = "bill_book_template"]
 pub struct BillBookTemplate {
-    pub id: i32,
+    pub id: i64,
     pub created_time: i64,
     pub updated_time: i64,
     pub deleted: i32,
