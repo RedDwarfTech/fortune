@@ -1,4 +1,5 @@
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl,TextExpressionMethods};
+use rocket::serde::json::Json;
 use rust_wheel::common::util::model_convert::map_entity;
 
 use rust_wheel::config::db::config;
@@ -21,7 +22,7 @@ pub fn get_template_list(filter_type: i32, filter_name: Option<String>) -> Vec<T
     return template_results;
 }
 
-pub fn get_template_detail(template_id: i32) -> Result<BillBookTemplate,String> {
+pub fn get_template_detail(template_id: i32) -> Result<TemplateResponse,String> {
     use crate::model::diesel::fortune::fortune_schema::bill_book_template as bill_book_template_table;
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let query = bill_book_template_table::table
@@ -32,5 +33,6 @@ pub fn get_template_detail(template_id: i32) -> Result<BillBookTemplate,String> 
     if query.is_empty() {
         return Err("template is null".parse().unwrap());
     }
-    return Ok(query.get(0).unwrap().to_owned())
+    let template_response = TemplateResponse::from(&query.get(0).unwrap().to_owned());
+    return Ok(template_response)
 }

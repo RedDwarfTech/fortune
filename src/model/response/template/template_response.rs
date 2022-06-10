@@ -1,7 +1,7 @@
 use serde::Serialize;
 use crate::model::diesel::fortune::fortune_models::BillBookTemplate;
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Default)]
 pub struct TemplateResponse {
     pub id: i32,
     pub name: String,
@@ -9,7 +9,8 @@ pub struct TemplateResponse {
     pub slogan: String,
     pub icon_url: String,
     pub user_count: i64,
-    pub template_type: i32
+    pub template_type: i32,
+    pub remark: String
 }
 
 impl From<&BillBookTemplate> for TemplateResponse {
@@ -21,7 +22,8 @@ impl From<&BillBookTemplate> for TemplateResponse {
             slogan: p.slogan.to_string(),
             icon_url: p.icon_url.to_string(),
             user_count: p.user_count,
-            template_type: p.template_type
+            template_type: p.template_type,
+            remark: p.remark.to_string()
         }
     }
 }

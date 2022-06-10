@@ -3,7 +3,14 @@
 #![allow(unused)]
 #![allow(clippy::all)]
 
+use okapi::openapi3::Responses;
+use rocket::{Request, response, Response};
+use rocket::http::{ContentType, Status};
+use rocket::response::Responder;
+use rocket::serde::json::serde_json;
 use rocket::serde::Serialize;
+use rocket_okapi::gen::OpenApiGenerator;
+use rocket_okapi::response::OpenApiResponderInner;
 use serde::Deserialize;
 use crate::model::diesel::fortune::fortune_schema::*;
 

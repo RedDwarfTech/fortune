@@ -10,7 +10,7 @@ mod biz;
 mod model;
 mod service;
 
-use rocket_okapi::{mount_endpoints_and_merged_docs, rapidoc::*, swagger_ui::*};
+use rocket_okapi::{mount_endpoints_and_merged_docs, OpenApiError, rapidoc::*, swagger_ui::*};
 use rocket_okapi::settings::UrlObject;
 
 use common::health_controller;
@@ -18,6 +18,9 @@ use biz::contents::contents_controller;
 use biz::template::bill_book_template_controller;
 use biz::bill::bill_controller;
 use biz::bill::bill_book_controller;
+
+
+pub type Result<T> = std::result::Result<T, OpenApiError>;
 
 
 #[rocket::main]
