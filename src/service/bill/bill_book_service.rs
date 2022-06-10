@@ -95,16 +95,17 @@ fn add_bill_book_impl(login_user_info: &LoginUserInfo, templates: &Vec<BillBookT
     let records = inserted_record.unwrap();
     // 使用to_owned()表示重新拷贝了一份数据，和重新构建一个String出来别无二致
     let r = records.get(0).unwrap().to_owned();
+    add_bill_book_categories(&r,login_user_info);
     return Ok(r);
 }
 
 ///
 /// 初始化账本目录数据
 ///
-fn add_bill_book_categories(template_id: i64,input_bill_book_id: i64, login_user_info: &LoginUserInfo){
+fn add_bill_book_categories(bill_book: &BillBook, login_user_info: &LoginUserInfo){
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     use crate::model::diesel::fortune::fortune_schema::bill_book_template_contents::dsl::*;
-    let predicate = id.eq(template_id);
+    let predicate = id.eq(bill_book.bill_book_template_id);
     let categories_record = bill_book_template_contents
         .filter(predicate)
         .load::<BillBookTemplateContent>(&connection)
@@ -116,7 +117,7 @@ fn add_bill_book_categories(template_id: i64,input_bill_book_id: i64, login_user
             updated_time: get_current_millisecond(),
             deleted: 0,
             creator: login_user_info.userId,
-            bill_book_id: input_bill_book_id,
+            bill_book_id: bill_book.id,
             name: record.name,
             contents: "".to_string(),
             content_id: record.id,
