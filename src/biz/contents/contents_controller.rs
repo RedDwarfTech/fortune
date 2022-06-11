@@ -1,11 +1,13 @@
 use okapi::openapi3::OpenApi;
 use rocket::form::Form;
 use rocket::response::content;
+use rocket::serde::json::Json;
 use rust_wheel::common::util::model_convert::box_rest_response;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 use rocket_okapi::settings::OpenApiSettings;
+use crate::model::request::contents::add_contents_request::AddContentsRequest;
 use crate::model::request::contents::contents_request::ContentsRequest;
 use crate::service::contents::contents_service::content_tree_query;
 
@@ -27,8 +29,8 @@ pub fn tree(query: ContentsRequest, login_user_info: LoginUserInfo) -> content::
 ///
 /// 新增某一个特定账本的分类，每一个账本都有单独的分类，注意新增A账本的分类不会影响B账本的分类
 #[openapi(tag = "账本分类目录")]
-#[post("/v1/contents?<contents_type>")]
-pub fn add_contents(contents_type: i32, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+#[post("/v1/contents", data = "<request>")]
+pub fn add_contents(request: Json<AddContentsRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     return box_rest_response("contents");
 }
 
