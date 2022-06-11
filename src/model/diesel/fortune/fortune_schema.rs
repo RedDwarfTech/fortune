@@ -7,7 +7,6 @@ table! {
         creator -> Int8,
         bill_book_template_id -> Int8,
         name -> Varchar,
-        contents -> Varchar,
     }
 }
 

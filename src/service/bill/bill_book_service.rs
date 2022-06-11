@@ -1,5 +1,6 @@
 use rocket::futures::StreamExt;
 use diesel::{BoolExpressionMethods, ExpressionMethods, PgConnection, QueryDsl, RunQueryDsl, TextExpressionMethods};
+use diesel::result::Error;
 use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::config::db::config;
@@ -62,23 +63,35 @@ fn get_template_list_count_by_user_id(filter_user_id: &i64) -> i64{
 /// 还要初始化当前账本收入、支出等类型的目录数据
 /// 不同的账本目录可自定义
 ///
-pub fn add_bill_book(request:&Json<BillBookRequest>, login_user_info: &LoginUserInfo) -> Result<BillBook,String> {
+pub fn add_bill_book(request:&Json<BillBookRequest>, login_user_info: &LoginUserInfo) -> Result<BillBook, String> {
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let templates = get_template_list_by_id(request.billBookTemplateId);
     if templates.is_empty() {
         return Err("the template did not exists, check your template id first".parse().unwrap());
     }
     let templates_count = get_template_list_count_by_user_id(&login_user_info.userId);
-    if templates_count >= 2 {
+    if templates_count >= 20 {
         return Err("2 bill book for every user".parse().unwrap());
     }
-    return add_bill_book_impl(login_user_info, &templates, request);
+    let transaction_result = connection.build_transaction()
+        .repeatable_read()
+        .run::<_, diesel::result::Error, _>(||{
+             return add_bill_book_impl(login_user_info, &templates, request);
+        });
+    return match transaction_result {
+        Ok(v) => {
+            Ok(v)
+        },
+        Err(_e) => {
+            Err("database error".parse().unwrap())
+        }
+    };
 }
 
 ///
 /// 初始化账本数据
 ///
-fn add_bill_book_impl(login_user_info: &LoginUserInfo, templates: &Vec<BillBookTemplate>, request:&Json<BillBookRequest>) -> Result<BillBook,String>{
+fn add_bill_book_impl(login_user_info: &LoginUserInfo, templates: &Vec<BillBookTemplate>, request:&Json<BillBookRequest>) -> Result<BillBook,diesel::result::Error>{
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let bill_book_record = BillBookAdd{
         created_time: get_current_millisecond(),
@@ -105,7 +118,7 @@ fn add_bill_book_impl(login_user_info: &LoginUserInfo, templates: &Vec<BillBookT
 fn add_bill_book_categories(bill_book: &BillBook, login_user_info: &LoginUserInfo){
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     use crate::model::diesel::fortune::fortune_schema::bill_book_template_contents::dsl::*;
-    let predicate = id.eq(bill_book.bill_book_template_id);
+    let predicate = bill_book_template_id.eq(bill_book.bill_book_template_id);
     let categories_record = bill_book_template_contents
         .filter(predicate)
         .load::<BillBookTemplateContent>(&connection)

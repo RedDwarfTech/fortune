@@ -52,7 +52,7 @@ pub fn add(request: Json<BillBookRequest>, login_user_info: LoginUserInfo) -> co
             box_rest_response(v)
         },
         Err(e) => {
-            box_rest_response(e)
+            box_rest_response(e.to_string())
         }
     }
 }

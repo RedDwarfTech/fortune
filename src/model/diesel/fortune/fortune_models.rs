@@ -17,7 +17,6 @@ pub struct BillBook {
     pub creator: i64,
     pub bill_book_template_id: i64,
     pub name: String,
-    pub contents: String,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
