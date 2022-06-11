@@ -72,6 +72,7 @@ table! {
         bill_book_id -> Int8,
         remark -> Nullable<Varchar>,
         amount -> Int8,
+        bill_book_contents_id -> Int8,
     }
 }
 

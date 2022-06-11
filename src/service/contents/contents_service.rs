@@ -12,6 +12,7 @@ use crate::model::diesel::fortune::fortune_custom_models::BillBookContentAdd;
 use crate::model::diesel::fortune::fortune_models::BillBookContent;
 use crate::model::diesel::fortune::fortune_schema::bill_book_template_contents::parent_id;
 use crate::model::request::contents::add_contents_request::AddContentsRequest;
+use crate::model::request::contents::del_contents_request::DelContentsRequest;
 use crate::model::response::contents::fortune_contents_response::FortuneContentResponse;
 
 ///
@@ -45,7 +46,7 @@ fn convert_to_tree_impl(contents: &Vec<FortuneContentResponse>) -> Vec<FortuneCo
     return result;
 }
 
-fn add_book_contents(request: &Json<AddContentsRequest>, login_user_info: &LoginUserInfo) -> Result<BillBookContent, String> {
+pub fn add_book_contents(request: &Json<AddContentsRequest>, login_user_info: &LoginUserInfo) -> Result<BillBookContent, String> {
     use crate::model::diesel::fortune::fortune_schema::bill_book_contents::dsl::*;
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let predicate = bill_book_id.eq(request.bill_book_id)
@@ -96,4 +97,50 @@ fn update_contents_id(pk_id: &i64){
         .expect("unable to update bill book contents");
 }
 
+pub fn del_book_contents<'a>(request: &'a Json<DelContentsRequest>, login_user_info: &'a LoginUserInfo) -> Result<String, &'a str> {
+    use crate::model::diesel::fortune::fortune_schema::bill_book_contents::dsl::*;
+    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
+    let predicate = id.eq(any(&request.ids));
+    let contents_result = bill_book_contents.filter(&predicate)
+        .load::<BillBookContent>(&connection)
+        .expect("Error fortune contents resource");
+    if contents_result.is_empty() {
+        // return Ok("ok");
+    }
+    for bill_book in contents_result {
+        if bill_book.creator != login_user_info.userId {
+            return Err("not contents creator");
+        }
+    }
+    let transaction_result = connection.build_transaction()
+        .repeatable_read()
+        .run::<_, diesel::result::Error, _>(||{
+            delete_bill_records(&request.ids, &request.bill_book_id).expect("TODO: panic message");
+            return delete_contents(&request.ids, &request.bill_book_id);
+        });
+    return match transaction_result {
+        Ok(v) => {
+            Ok(v)
+        },
+        Err(_e) => {
+            Err("database error")
+        }
+    };
+}
 
+fn delete_contents(ids: &Vec<i64>, filter_bill_book_id: &i64) -> Result<String, diesel::result::Error> {
+    use crate::model::diesel::fortune::fortune_schema::bill_book_contents::dsl::*;
+    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
+    let predicate = id.eq(any(&ids)).and(bill_book_id.eq(filter_bill_book_id));
+    let delete_result = diesel::delete(bill_book_contents.filter(predicate))
+        .execute(&connection);
+    Ok("ok".parse().unwrap())
+}
+
+fn delete_bill_records(ids: &Vec<i64>, filter_bill_book_id: &i64) -> Result<String,diesel::result::Error> {
+    use crate::model::diesel::fortune::fortune_schema::bill_record::dsl::*;
+    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
+    let predicate = bill_book_contents_id.eq(any(&ids)).and(bill_book_id.eq(filter_bill_book_id));
+    let delete_result = diesel::delete(bill_record.filter(predicate)).execute(&connection);
+    Ok("ok".parse().unwrap())
+}

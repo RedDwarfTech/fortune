@@ -9,7 +9,8 @@ use rocket_okapi::{openapi, openapi_get_routes_spec};
 use rocket_okapi::settings::OpenApiSettings;
 use crate::model::request::contents::add_contents_request::AddContentsRequest;
 use crate::model::request::contents::contents_request::ContentsRequest;
-use crate::service::contents::contents_service::content_tree_query;
+use crate::model::request::contents::del_contents_request::DelContentsRequest;
+use crate::service::contents::contents_service::{add_book_contents, content_tree_query, del_book_contents};
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
     openapi_get_routes_spec![settings: tree, add_contents, del_contents, edit_contents]
@@ -21,7 +22,7 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 #[openapi(tag = "账本分类目录")]
 #[get("/v1/tree?<query..>")]
 pub fn tree(query: ContentsRequest, login_user_info: LoginUserInfo) -> content::RawJson<String> {
-    let contents =  content_tree_query(query.contents_type, query.bill_book_id);
+    let contents = content_tree_query(query.contents_type, query.bill_book_id);
     return box_rest_response(contents);
 }
 
@@ -31,16 +32,25 @@ pub fn tree(query: ContentsRequest, login_user_info: LoginUserInfo) -> content::
 #[openapi(tag = "账本分类目录")]
 #[post("/v1/contents", data = "<request>")]
 pub fn add_contents(request: Json<AddContentsRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
-    return box_rest_response("contents");
+    let new_contents = add_book_contents(&request, &login_user_info);
+    return match new_contents {
+        Ok(v) => {
+            box_rest_response(v)
+        },
+        Err(e) => {
+            box_rest_response(e.to_string())
+        }
+    }
 }
 
 /// # 删除账本分类
 ///
 /// 删除某一个特定账本的分类，每一个账本都有单独的分类，注意删除A账本的分类不会影响B账本的分类
 #[openapi(tag = "账本分类目录")]
-#[delete("/v1/contents?<contents_type>")]
-pub fn del_contents(contents_type: i32, login_user_info: LoginUserInfo) -> content::RawJson<String> {
-    return box_rest_response("contents");
+#[delete("/v1/contents", data = "<request>")]
+pub fn del_contents(request: Json<DelContentsRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+    del_book_contents(&request, &login_user_info).expect("delete contents error");
+    return box_rest_response("ok");
 }
 
 /// # 编辑账本分类

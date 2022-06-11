@@ -82,5 +82,6 @@ pub struct BillRecord {
     pub bill_book_id: i64,
     pub remark: Option<String>,
     pub amount: i64,
+    pub bill_book_contents_id: i64,
 }
 
