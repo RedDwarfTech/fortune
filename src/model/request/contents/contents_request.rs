@@ -6,6 +6,8 @@ use rocket_okapi::okapi::schemars;
 #[derive(Debug, PartialEq, Eq, Deserialize, Serialize, FromForm, JsonSchema)]
 #[allow(non_snake_case)]
 pub struct ContentsRequest {
-    /// 分类类型
-    contents_type: i32
+    /// 分类类型 1、支出 2、收入
+    pub contents_type: i32,
+    /// 账本ID
+    pub bill_book_id: i64
 }

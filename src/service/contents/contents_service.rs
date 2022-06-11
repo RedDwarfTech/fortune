@@ -1,9 +1,12 @@
 use diesel::{BoolExpressionMethods, QueryDsl, RunQueryDsl};
 use diesel::dsl::{any, not};
-use rust_wheel::common::util::convert_to_tree::convert_to_tree;
+use rust_wheel::common::util::convert_to_tree_i64::convert_to_tree;
+use rust_wheel::common::util::model_convert::map_entity;
 use rust_wheel::config::db::config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 use crate::diesel::ExpressionMethods;
+use crate::model::diesel::fortune::fortune_models::BillBookContent;
+use crate::model::response::contents::fortune_contents_response::FortuneContentResponse;
 
 ///
 /// 每个用户看到的菜单都不一样
@@ -14,6 +17,24 @@ use crate::diesel::ExpressionMethods;
 /// 后期用户可以在界面上进行区分
 /// 会显示2个区域，一个是已经有的记账类型，一个是目前可以加入的记账类型
 ///
-pub fn content_tree_query<T>(filter_content_type: i32, login_user_info: LoginUserInfo) {
+pub fn content_tree_query(filter_content_type: i32, filter_book_id: i64) -> Vec<FortuneContentResponse> {
+    use crate::model::diesel::fortune::fortune_schema::bill_book_contents::dsl::*;
+    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
+    let predicate = bill_book_id.eq(filter_book_id).and(contents_type.eq(filter_content_type));
+    let contents_result = bill_book_contents.filter(&predicate)
+        .load::<BillBookContent>(&connection)
+        .expect("Error fortune contents resource");
+    let response = map_entity(contents_result);
+    return convert_to_tree_impl(&response);
+}
 
+pub fn convert_to_tree_impl(contents: &Vec<FortuneContentResponse>) -> Vec<FortuneContentResponse> {
+    let mut root_element:Vec<_> = contents.iter()
+        .filter(|content|content.parent_id==0)
+        .collect();
+    let mut sub_element:Vec<_> =  contents.iter()
+        .filter(|content|content.parent_id!=0)
+        .collect();
+    let result = convert_to_tree(&root_element, &sub_element);
+    return result;
 }

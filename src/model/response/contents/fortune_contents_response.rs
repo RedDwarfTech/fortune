@@ -1,6 +1,7 @@
 use rust_wheel::common::util::convert_to_tree_i64::IntoTree;
 use serde::Serialize;
 use crate::model::diesel::fortune::fortune_custom_models::BillBookTemplateContents;
+use crate::model::diesel::fortune::fortune_models::BillBookContent;
 
 #[derive(Debug, Serialize)]
 pub struct FortuneContentResponse {
@@ -16,7 +17,25 @@ pub struct FortuneContentResponse {
     pub children: Vec<FortuneContentResponse>
 }
 
-impl IntoTree for &BillBookTemplateContents {
+/// https://stackoverflow.com/questions/72569425/borrowed-value-does-not-live-long-enough-when-write-an-generic-object-mapping-fu
+impl From<&BillBookContent> for FortuneContentResponse {
+    fn from(p: &BillBookContent) -> Self {
+        Self {
+            id: p.id,
+            parent_id: p.parent_id,
+            created_time: p.created_time,
+            updated_time: p.updated_time,
+            name: p.name.to_string(),
+            contents_type: p.contents_type,
+            deleted: p.deleted,
+            hidden: 0,
+            sort: 0,
+            children: vec![]
+        }
+    }
+}
+
+impl IntoTree for &FortuneContentResponse {
     type Output = FortuneContentResponse;
 
     fn get_id(&self) -> i64 {
@@ -42,6 +61,3 @@ impl IntoTree for &BillBookTemplateContents {
         }
     }
 }
-
-
-

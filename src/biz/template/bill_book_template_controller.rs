@@ -9,17 +9,13 @@ https://stackoverflow.com/questions/61077692/how-can-i-fix-unused-imports-in-rus
 **/
 
 use rocket::response::{content, Responder};
-use rocket::serde::json::serde_json;
 use rust_wheel::common::util::model_convert::box_rest_response;
 
 use crate::service::template::bill_book_template_service::{get_template_detail, get_template_list};
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 use rocket_okapi::settings::OpenApiSettings;
-use rust_wheel::model::response::api_response::ApiResponse;
-use serde::Serialize;
 use crate::model::request::template::template_detail_request::TemplateDetailRequest;
 use crate::model::request::template::template_request::TemplateRequest;
-use crate::model::response::template::template_response::TemplateResponse;
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
     openapi_get_routes_spec![settings: list, detail]
