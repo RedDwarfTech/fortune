@@ -7,6 +7,7 @@ use crate::model::diesel::fortune::fortune_models::BillBookContent;
 pub struct FortuneContentResponse {
     pub id: i64,
     pub parent_id: i64,
+    pub content_id: i64,
     pub created_time: i64,
     pub updated_time: i64,
     pub name: String,
@@ -23,6 +24,7 @@ impl From<&BillBookContent> for FortuneContentResponse {
         Self {
             id: p.id,
             parent_id: p.parent_id,
+            content_id: p.content_id,
             created_time: p.created_time,
             updated_time: p.updated_time,
             name: p.name.to_string(),
@@ -39,7 +41,7 @@ impl IntoTree for &FortuneContentResponse {
     type Output = FortuneContentResponse;
 
     fn get_id(&self) -> i64 {
-        self.id
+        self.content_id
     }
 
     fn get_parent_id(&self) -> i64 {
@@ -50,6 +52,7 @@ impl IntoTree for &FortuneContentResponse {
         FortuneContentResponse {
             id: self.id,
             parent_id: self.parent_id,
+            content_id: self.content_id,
             created_time: self.created_time,
             updated_time: self.updated_time,
             name: self.name.to_string(),

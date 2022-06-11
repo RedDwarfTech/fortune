@@ -19,8 +19,8 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 #[openapi(tag = "账本分类目录")]
 #[get("/v1/tree?<query..>")]
 pub fn tree(query: ContentsRequest, login_user_info: LoginUserInfo) -> content::RawJson<String> {
-    content_tree_query(query.contents_type, query.bill_book_id);
-    return box_rest_response("contents");
+    let contents =  content_tree_query(query.contents_type, query.bill_book_id);
+    return box_rest_response(contents);
 }
 
 /// # 新增账本分类
