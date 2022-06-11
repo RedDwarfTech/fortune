@@ -15,7 +15,7 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 
 /// # 查询账本分类目录
 ///
-/// 获取当前账本的分类目录，不同的账本模版分类目录不同。
+/// 获取当前账本的分类目录，不同的账本模版分类目录不同。返回树形结构的数据。
 #[openapi(tag = "账本分类目录")]
 #[get("/v1/tree?<query..>")]
 pub fn tree(query: ContentsRequest, login_user_info: LoginUserInfo) -> content::RawJson<String> {
