@@ -11,8 +11,10 @@ use crate::diesel::ExpressionMethods;
 use crate::model::diesel::fortune::fortune_custom_models::BillBookContentAdd;
 use crate::model::diesel::fortune::fortune_models::BillBookContent;
 use crate::model::diesel::fortune::fortune_schema::bill_book_template_contents::parent_id;
+use crate::model::diesel::fortune::fortune_schema::bill_record::bill_book_id;
 use crate::model::request::contents::add_contents_request::AddContentsRequest;
 use crate::model::request::contents::del_contents_request::DelContentsRequest;
+use crate::model::request::contents::edit_contents_request::EditContentsRequest;
 use crate::model::response::contents::fortune_contents_response::FortuneContentResponse;
 
 ///
@@ -142,5 +144,33 @@ fn delete_bill_records(ids: &Vec<i64>, filter_bill_book_id: &i64) -> Result<Stri
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let predicate = bill_book_contents_id.eq(any(&ids)).and(bill_book_id.eq(filter_bill_book_id));
     let delete_result = diesel::delete(bill_record.filter(predicate)).execute(&connection);
+    Ok("ok".parse().unwrap())
+}
+
+pub fn edit_book_contents<'a>(request: &'a Json<EditContentsRequest>, login_user_info: &'a LoginUserInfo) -> Result<String, &'a str> {
+    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
+    let transaction_result = connection.build_transaction()
+        .repeatable_read()
+        .run::<_, diesel::result::Error, _>(||{
+            return edit_bill_contents(&request.id, &request.bill_book_id, &request.name);
+        });
+    return match transaction_result {
+        Ok(v) => {
+            Ok(v)
+        },
+        Err(_e) => {
+            Err("database error")
+        }
+    };
+}
+
+fn edit_bill_contents(filter_id: &i64, filter_bill_book_id: &i64, new_name: &String) -> Result<String,diesel::result::Error> {
+    use crate::model::diesel::fortune::fortune_schema::bill_book_contents::dsl::*;
+    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
+    let predicate = id.eq(filter_id).and(bill_book_id.eq(filter_bill_book_id));
+    diesel::update(bill_book_contents.filter(predicate))
+        .set((name.eq(new_name)))
+        .execute(&connection)
+        .expect("unable to update bill book contents");
     Ok("ok".parse().unwrap())
 }

@@ -10,7 +10,8 @@ use rocket_okapi::settings::OpenApiSettings;
 use crate::model::request::contents::add_contents_request::AddContentsRequest;
 use crate::model::request::contents::contents_request::ContentsRequest;
 use crate::model::request::contents::del_contents_request::DelContentsRequest;
-use crate::service::contents::contents_service::{add_book_contents, content_tree_query, del_book_contents};
+use crate::model::request::contents::edit_contents_request::EditContentsRequest;
+use crate::service::contents::contents_service::{add_book_contents, content_tree_query, del_book_contents, edit_book_contents};
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
     openapi_get_routes_spec![settings: tree, add_contents, del_contents, edit_contents]
@@ -62,7 +63,8 @@ pub fn del_contents(request: Json<DelContentsRequest>, login_user_info: LoginUse
 // PUT 用于更新一个业务对象的所有完整信息，就像是我们通过表单提交所有的数据，
 // 而 PATCH 则对更为API化的数据更新操作，只需要更需要更新的字段（参看 RFC 5789 ）。
 #[openapi(tag = "账本分类目录")]
-#[patch("/v1/contents?<contents_type>")]
-pub fn edit_contents(contents_type: i32, login_user_info: LoginUserInfo) -> content::RawJson<String> {
-    return box_rest_response("contents");
+#[patch("/v1/contents", data = "<request>")]
+pub fn edit_contents(request: Json<EditContentsRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+    edit_book_contents(&request, &login_user_info).expect("TODO: panic message");
+    return box_rest_response("ok");
 }
