@@ -1,16 +1,18 @@
 use diesel::{ExpressionMethods, QueryDsl, QueryResult, RunQueryDsl};
+use rocket::futures::TryFutureExt;
 use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::config::db::config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
 use crate::model::{request::bill::bill_add_request::BillAddRequest, diesel::fortune::fortune_custom_models::BillRecordAdd};
-use crate::model::diesel::fortune::fortune_models::{BillBook, BillRecord};
+use crate::model::diesel::fortune::fortune_models::{BillBook, BillRecord, Role};
 use crate::model::diesel::fortune::fortune_schema::bill_book::archived;
 use crate::model::diesel::fortune::fortune_schema::bill_book::dsl::bill_book;
 use crate::model::request::bill::bill_book_archive_request::BillBookArchiveRequest;
 use crate::model::request::bill::bill_detail_request::BillDetailRequest;
 use crate::model::request::bill::bill_page_request::BillPageRequest;
+use crate::model::request::role::role_list_request::RoleListRequest;
 
 pub fn add_role(_request: Json<BillAddRequest>, login_user_info: &LoginUserInfo) -> Result<BillRecord, String> {
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
@@ -42,9 +44,11 @@ pub fn add_role(_request: Json<BillAddRequest>, login_user_info: &LoginUserInfo)
     Ok(insert_result.unwrap())
 }
 
-pub fn query_roles( login_user_info: &LoginUserInfo) {
-    use crate::model::diesel::fortune::fortune_schema::role as bill_book_table;
-
+pub fn query_bill_book_roles(query: &RoleListRequest, login_user_info: &LoginUserInfo) -> Vec<Role> {
+    use crate::model::diesel::fortune::fortune_schema::role as role_table;
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
-
+    let role_results = role_table::table
+        .get_results::<Role>(&connection)
+        .expect("get results failed");
+    return role_results;
 }

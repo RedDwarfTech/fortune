@@ -5,9 +5,9 @@ use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::config::db::config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
-use crate::model::diesel::fortune::fortune_custom_models::{BillBookAdd, BillBookContentAdd, BillBookTemplateContents, BillRecordAdd};
+use crate::model::diesel::fortune::fortune_custom_models::{BillBookAdd, BillBookContentAdd, BillBookRoleAdd, BillBookTemplateContents, BillRecordAdd};
 
-use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookContent, BillBookTemplate, BillBookTemplateContent, BillRecord};
+use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookContent, BillBookTemplate, BillBookTemplateContent, BillRecord, Role};
 use crate::model::diesel::fortune::fortune_schema::bill_book::creator;
 use crate::model::request::bill::bill_book_request::BillBookRequest;
 
@@ -146,6 +146,35 @@ fn add_bill_book_categories(bill_book: &BillBook, login_user_info: &LoginUserInf
         .unwrap();
 }
 
-
-
+///
+/// 初始化账本角色数据
+///
+fn add_bill_book_role(bill_book: &BillBook, login_user_info: &LoginUserInfo){
+    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
+    use crate::model::diesel::fortune::fortune_schema::role::dsl::*;
+    let predicate = role_type.eq(1);
+    let categories_record = role
+        .filter(predicate)
+        .load::<Role>(&connection)
+        .expect("error get categories contents");
+    let mut bill_book_roles:Vec<BillBookRoleAdd> = Vec::new();
+    for record in categories_record {
+        let bill_book_content = BillBookRoleAdd{
+            created_time: get_current_millisecond(),
+            updated_time: get_current_millisecond(),
+            deleted: 0,
+            creator: login_user_info.userId,
+            bill_book_id: bill_book.id,
+            remark: record.remark.to_string(),
+            name: record.name,
+            role_type: record.role_type
+        };
+        bill_book_roles.push(bill_book_content);
+    }
+    diesel::insert_into(crate::model::diesel::fortune::fortune_schema::bill_book_role::table)
+        .values(&bill_book_roles)
+        .on_conflict_do_nothing()
+        .execute(&connection)
+        .unwrap();
+}
 
