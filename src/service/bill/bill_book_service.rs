@@ -109,6 +109,7 @@ fn add_bill_book_impl(login_user_info: &LoginUserInfo, templates: &Vec<BillBookT
     // 使用to_owned()表示重新拷贝了一份数据，和重新构建一个String出来别无二致
     let r = records.get(0).unwrap().to_owned();
     add_bill_book_categories(&r,login_user_info);
+    add_bill_book_role(&r, login_user_info);
     return Ok(r);
 }
 
@@ -165,7 +166,7 @@ fn add_bill_book_role(bill_book: &BillBook, login_user_info: &LoginUserInfo){
             deleted: 0,
             creator: login_user_info.userId,
             bill_book_id: bill_book.id,
-            remark: record.remark.to_string(),
+            remark: Option::from(record.remark),
             name: record.name,
             role_type: record.role_type
         };

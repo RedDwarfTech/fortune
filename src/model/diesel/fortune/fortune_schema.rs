@@ -34,7 +34,7 @@ table! {
         updated_time -> Int8,
         deleted -> Int4,
         creator -> Int8,
-        remark -> Varchar,
+        remark -> Nullable<Varchar>,
         role_type -> Int4,
         name -> Varchar,
         bill_book_id -> Int8,

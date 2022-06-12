@@ -66,7 +66,7 @@ pub struct BillBookRoleAdd {
     pub deleted: i32,
     pub creator: i64,
     pub bill_book_id: i64,
-    pub remark: String,
+    pub remark: Option<String>,
     pub role_type: i32,
     pub name: String,
 }
