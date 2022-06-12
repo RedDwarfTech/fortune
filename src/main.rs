@@ -20,6 +20,7 @@ use biz::bill::bill_controller;
 use biz::bill::bill_book_controller;
 use biz::user::user_action_controller;
 use biz::role::role_controller;
+use biz::permission::permission_controller;
 
 pub type Result<T> = std::result::Result<T, OpenApiError>;
 
@@ -75,6 +76,7 @@ pub fn create_server() -> Rocket<Build> {
         "/bill-book" => bill_book_controller::get_routes_and_docs(&openapi_settings),
         "user-action" => user_action_controller::get_routes_and_docs(&openapi_settings),
         "role" => role_controller::get_routes_and_docs(&openapi_settings),
+        "permission" => permission_controller::get_routes_and_docs(&openapi_settings),
         //"/message" => message::get_routes_and_docs(&openapi_settings),
     };
 
