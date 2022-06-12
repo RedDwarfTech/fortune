@@ -137,6 +137,7 @@ table! {
         user_id -> Int8,
         remark -> Nullable<Varchar>,
         action -> Varchar,
+        bill_book_id -> Int8,
     }
 }
 

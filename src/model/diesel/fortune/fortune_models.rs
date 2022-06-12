@@ -147,6 +147,7 @@ pub struct UserActionLog {
     pub user_id: i64,
     pub remark: Option<String>,
     pub action: String,
+    pub bill_book_id: i64,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
