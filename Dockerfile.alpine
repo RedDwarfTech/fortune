@@ -2,7 +2,8 @@
 # 但是现在无法解决rust musl编译问题
 # https://stackoverflow.com/questions/72461117/error-failed-to-run-custom-build-command-for-ring-v0-16-20
 # https://stackoverflow.com/questions/72462316/linking-with-x86-64-linux-musl-gcc-failed-exit-status-1
-
+# https://github.com/diesel-rs/diesel/issues/700
+# https://github.com/diesel-rs/diesel/issues/813
 
 # the packed image will encount a Segmentation fault (core dumped)
 # still did not figure out why would this happen 

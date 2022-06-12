@@ -7,6 +7,7 @@ table! {
         creator -> Int8,
         bill_book_template_id -> Int8,
         name -> Varchar,
+        archived -> Int4,
     }
 }
 
@@ -73,6 +74,7 @@ table! {
         remark -> Nullable<Varchar>,
         amount -> Int8,
         bill_book_contents_id -> Int8,
+        account_id -> Int4,
     }
 }
 

@@ -17,6 +17,7 @@ pub struct BillBook {
     pub creator: i64,
     pub bill_book_template_id: i64,
     pub name: String,
+    pub archived: i32,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
@@ -83,6 +84,7 @@ pub struct BillRecord {
     pub remark: Option<String>,
     pub amount: i64,
     pub bill_book_contents_id: i64,
+    pub account_id: i32,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]

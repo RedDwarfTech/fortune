@@ -12,9 +12,10 @@ use rocket::serde::json::Json;
 use rust_wheel::common::util::model_convert::box_rest_response;
 
 use crate::service::bill::bill_service::{add_bill, query_bill_records};
-use crate::model::request::bill::bill_request::BillRequest;
+use crate::model::request::bill::bill_add_request::BillAddRequest;
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 use rocket_okapi::settings::OpenApiSettings;
+use rust_wheel::model::user::login_user_info::LoginUserInfo;
 use crate::model::request::bill::bill_page_request::BillPageRequest;
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
@@ -26,9 +27,16 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 /// 新增记账流水
 #[openapi(tag = "账单流水")]
 #[post("/v1/add", data = "<request>")]
-pub fn add(request: Json<BillRequest>) -> content::RawJson<String> {
-    let contents = add_bill(request);
-    return box_rest_response(contents);
+pub fn add(request: Json<BillAddRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+    let contents = add_bill(request, &login_user_info);
+    return match contents {
+        Ok(v) => {
+            box_rest_response(v)
+        },
+        Err(e) => {
+            box_rest_response(e.to_string())
+        }
+    }
 }
 
 /// # 查询记账流水
