@@ -11,6 +11,10 @@ filter = { only_tables = [
     "bill_record",
     "bill_book_template",
     "bill_book",
-    "user_action_log"
+    "user_action_log",
+    "role",
+    "user_role",
+    "permission",
+    "role_permission"
 ] }
 

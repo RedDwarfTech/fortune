@@ -88,6 +88,42 @@ pub struct BillRecord {
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[table_name = "permission"]
+pub struct Permission {
+    pub id: i64,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub deleted: i32,
+    pub creator: i64,
+    pub remark: String,
+    pub role_type: String,
+}
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[table_name = "role"]
+pub struct Role {
+    pub id: i64,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub deleted: i32,
+    pub creator: i64,
+    pub remark: String,
+    pub role_type: String,
+    pub name: String,
+}
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[table_name = "role_permission"]
+pub struct RolePermission {
+    pub id: i64,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub deleted: i32,
+    pub creator: i64,
+    pub name: String,
+}
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
 #[table_name = "user_action_log"]
 pub struct UserActionLog {
     pub id: i64,
@@ -97,5 +133,17 @@ pub struct UserActionLog {
     pub user_id: i64,
     pub remark: Option<String>,
     pub action: String,
+}
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[table_name = "user_role"]
+pub struct UserRole {
+    pub id: i64,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub deleted: i32,
+    pub creator: i64,
+    pub user_id: String,
+    pub role_id: i64,
 }
 
