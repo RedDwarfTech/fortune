@@ -85,3 +85,15 @@ pub struct BillRecord {
     pub bill_book_contents_id: i64,
 }
 
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[table_name = "user_action_log"]
+pub struct UserActionLog {
+    pub id: i64,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub deleted: i32,
+    pub user_id: i64,
+    pub remark: Option<String>,
+    pub action: String,
+}
+

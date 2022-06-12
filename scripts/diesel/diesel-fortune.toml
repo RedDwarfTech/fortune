@@ -10,6 +10,7 @@ filter = { only_tables = [
     "bill_book_contents",
     "bill_record",
     "bill_book_template",
-    "bill_book"
+    "bill_book",
+    "user_action_log"
 ] }
 
