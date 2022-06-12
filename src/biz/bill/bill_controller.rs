@@ -11,11 +11,13 @@ use rocket::response::content;
 use rocket::serde::json::Json;
 use rust_wheel::common::util::model_convert::box_rest_response;
 
-use crate::service::bill::bill_service::{add_bill, query_bill_records};
+use crate::service::bill::bill_service::{add_bill, archive_bill_book, query_bill_record_detail, query_bill_records};
 use crate::model::request::bill::bill_add_request::BillAddRequest;
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 use rocket_okapi::settings::OpenApiSettings;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
+use crate::model::request::bill::bill_book_archive_request::BillBookArchiveRequest;
+use crate::model::request::bill::bill_detail_request::BillDetailRequest;
 use crate::model::request::bill::bill_page_request::BillPageRequest;
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
@@ -55,8 +57,8 @@ pub fn page(query: BillPageRequest) -> content::RawJson<String> {
 /// 查询记账流水详情
 #[openapi(tag = "账单流水")]
 #[get("/v1/detail?<query..>")]
-pub fn detail(query: BillPageRequest) -> content::RawJson<String> {
-    let contents = query_bill_records(&query);
+pub fn detail(query: BillDetailRequest) -> content::RawJson<String> {
+    let contents = query_bill_record_detail(&query);
     return box_rest_response(contents);
 }
 
@@ -65,9 +67,9 @@ pub fn detail(query: BillPageRequest) -> content::RawJson<String> {
 /// 封存部分流水防止修改
 #[openapi(tag = "账单流水")]
 #[patch("/v1/archive?<query..>")]
-pub fn archive(query: BillPageRequest) -> content::RawJson<String> {
-    let contents = query_bill_records(&query);
-    return box_rest_response(contents);
+pub fn archive(query: BillBookArchiveRequest) -> content::RawJson<String> {
+    archive_bill_book(&query);
+    return box_rest_response("ok");
 }
 
 /// # 查询可恢复流水
