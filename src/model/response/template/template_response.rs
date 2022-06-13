@@ -1,9 +1,12 @@
 use serde::Serialize;
 use crate::model::diesel::fortune::fortune_models::BillBookTemplate;
+use rocket_okapi::okapi::schemars::JsonSchema;
+use rocket_okapi::okapi::schemars;
 
-#[derive(Debug, Serialize, Default)]
+#[derive(Debug, Serialize, JsonSchema, Default)]
 pub struct TemplateResponse {
     pub id: i64,
+    /// 账本模版名称
     pub name: String,
     pub tags: String,
     pub slogan: String,

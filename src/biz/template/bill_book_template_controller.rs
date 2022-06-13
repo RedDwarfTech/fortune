@@ -9,13 +9,16 @@ https://stackoverflow.com/questions/61077692/how-can-i-fix-unused-imports-in-rus
 **/
 
 use rocket::response::{content, Responder};
-use rust_wheel::common::util::model_convert::box_rest_response;
+use rocket::serde::json::Json;
+use rust_wheel::common::util::model_convert::{box_rest_response, box_type_rest_response};
 
 use crate::service::template::bill_book_template_service::{get_template_detail, get_template_list};
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 use rocket_okapi::settings::OpenApiSettings;
+use rust_wheel::model::response::api_response::ApiResponse;
 use crate::model::request::template::template_detail_request::TemplateDetailRequest;
 use crate::model::request::template::template_request::TemplateRequest;
+use crate::model::response::template::template_response::TemplateResponse;
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
     openapi_get_routes_spec![settings: list, detail]
@@ -26,9 +29,10 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 /// 返回不同类型的账本模版列表
 #[openapi(tag = "账本模版")]
 #[get("/v1/list?<query..>")]
-pub fn list(query: TemplateRequest) -> Result<content::RawJson<String>, String> {
+pub fn list(query: TemplateRequest) -> Result<Json<ApiResponse<Vec<TemplateResponse>>>, String> {
     let contents = get_template_list(query.template_type, query.name);
-    return Ok(box_rest_response(contents));
+    let boxed_response = box_type_rest_response(contents);
+    return Ok(Json::from(boxed_response));
 }
 
 /// # 查询账本模版详情
