@@ -8,11 +8,17 @@ pub struct TemplateResponse {
     pub id: i64,
     /// 账本模版名称
     pub name: String,
+    /// 账本模版标签
     pub tags: String,
+    /// 账本模版一句话描述
     pub slogan: String,
+    /// 图标地址
     pub icon_url: String,
+    /// 当前用户数
     pub user_count: i64,
+    /// 模版类型
     pub template_type: i32,
+    /// 详细描述
     pub remark: String
 }
 

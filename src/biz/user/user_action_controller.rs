@@ -17,9 +17,9 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 ///
 /// 分页查询用户操作日志
 #[openapi(tag = "操作日志")]
-#[post("/v1/page", data = "<request>")]
-pub fn page(request: Json<UserActionRequest>) -> content::RawJson<String> {
-    let query_results = query_user_actions(&request);
+#[get("/v1/page?<query..>")]
+pub fn page(query: UserActionRequest) -> content::RawJson<String> {
+    let query_results = query_user_actions(&query);
     return box_rest_response(query_results);
 }
 
