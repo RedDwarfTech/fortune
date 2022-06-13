@@ -29,10 +29,10 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 /// 返回不同类型的账本模版列表
 #[openapi(tag = "账本模版")]
 #[get("/v1/list?<query..>")]
-pub fn list(query: TemplateRequest) -> Result<Json<ApiResponse<Vec<TemplateResponse>>>, String> {
+pub fn list(query: TemplateRequest) -> Json<ApiResponse<Vec<TemplateResponse>>> {
     let contents = get_template_list(query.template_type, query.name);
     let boxed_response = box_type_rest_response(contents);
-    return Ok(Json::from(boxed_response));
+    return Json::from(boxed_response);
 }
 
 /// # 查询账本模版详情
@@ -40,14 +40,7 @@ pub fn list(query: TemplateRequest) -> Result<Json<ApiResponse<Vec<TemplateRespo
 /// 根据账本模版ID查询账本详情
 #[openapi(tag = "账本模版")]
 #[get("/v1/detail?<query..>")]
-pub fn detail(query: TemplateDetailRequest) -> content::RawJson<String> {
+pub fn detail(query: TemplateDetailRequest) -> Result<Json<ApiResponse<TemplateResponse>>,Json<ApiResponse<String>>> {
     let contents = get_template_detail(query.id);
-    return match contents {
-        Ok(v) => {
-            box_rest_response(v)
-        },
-        Err(e) => {
-            box_rest_response(e)
-        }
-    }
+    return contents
 }

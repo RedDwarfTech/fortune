@@ -9,6 +9,7 @@ mod common;
 mod biz;
 mod model;
 mod service;
+mod utils;
 
 use rocket_okapi::{mount_endpoints_and_merged_docs, OpenApiError, rapidoc::*, swagger_ui::*};
 use rocket_okapi::settings::UrlObject;
