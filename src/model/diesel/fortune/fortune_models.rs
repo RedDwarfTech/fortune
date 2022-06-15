@@ -135,6 +135,7 @@ pub struct RolePermission {
     pub deleted: i32,
     pub creator: i64,
     pub name: String,
+    pub bill_book_id: i64,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
@@ -160,5 +161,6 @@ pub struct UserRole {
     pub creator: i64,
     pub user_id: String,
     pub role_id: i64,
+    pub bill_book_id: i64,
 }
 

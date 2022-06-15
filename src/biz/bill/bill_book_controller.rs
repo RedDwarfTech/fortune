@@ -44,7 +44,7 @@ pub fn detail(id: i64) -> content::RawJson<String> {
 ///
 /// 新增不同类型的账本
 #[openapi(tag = "账本")]
-#[put("/v1/add", data = "<request>")]
+#[post("/v1/add", data = "<request>")]
 pub fn add(request: Json<BillBookRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let bill_book = add_bill_book(&request, &login_user_info);
     return match bill_book {

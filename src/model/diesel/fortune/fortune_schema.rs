@@ -125,6 +125,7 @@ table! {
         deleted -> Int4,
         creator -> Int8,
         name -> Varchar,
+        bill_book_id -> Int8,
     }
 }
 
@@ -150,6 +151,7 @@ table! {
         creator -> Int8,
         user_id -> Varchar,
         role_id -> Int8,
+        bill_book_id -> Int8,
     }
 }
 

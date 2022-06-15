@@ -15,6 +15,7 @@ use crate::model::request::bill::bill_detail_request::BillDetailRequest;
 use crate::model::request::bill::bill_page_request::BillPageRequest;
 use crate::model::request::role::add_role_request::AddRoleRequest;
 use crate::model::request::role::role_list_request::RoleListRequest;
+use crate::utils::database::get_connection;
 
 pub fn add_role(_request: Json<BillAddRequest>, login_user_info: &LoginUserInfo) -> Result<BillRecord, String> {
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
@@ -46,11 +47,13 @@ pub fn add_role(_request: Json<BillAddRequest>, login_user_info: &LoginUserInfo)
     Ok(insert_result.unwrap())
 }
 
-pub fn query_bill_book_roles(query: &RoleListRequest, login_user_info: &LoginUserInfo) -> Vec<Role> {
-    use crate::model::diesel::fortune::fortune_schema::role as role_table;
-    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
-    let role_results = role_table::table
-        .get_results::<Role>(&connection)
+pub fn query_bill_book_roles(query: &RoleListRequest, login_user_info: &LoginUserInfo) -> Vec<BillBookRole> {
+    use crate::model::diesel::fortune::fortune_schema::bill_book_role as bill_book_role_table;
+    let connection = get_connection();
+    let predicate = bill_book_role_table::dsl::bill_book_id.eq(query.bill_book_id);
+    let role_results = bill_book_role_table::table
+        .filter(predicate)
+        .get_results::<BillBookRole>(&connection)
         .expect("get results failed");
     return role_results;
 }
