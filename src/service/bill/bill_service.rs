@@ -75,8 +75,18 @@ pub fn query_recoverable_records(query: &BillPageRequest) -> Vec<BillRecord>{
     return bill_book_records;
 }
 
+pub fn recover_bill_record(query: &BillPageRequest){
+    let connection = get_connection();
+    use crate::model::diesel::fortune::fortune_schema::bill_book as bill_book_table;
+    let predicate = bill_book_table::id.eq(query.bill_book_id);
+    diesel::update(bill_book.filter(predicate))
+        .set((archived.eq(1)))
+        .execute(&connection)
+        .expect("unable to update bill book contents");
+}
+
 pub fn query_bill_record_detail(_request: &BillDetailRequest) -> BillRecord {
-    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
+    let connection = get_connection();
     use crate::model::diesel::fortune::fortune_schema::bill_record as bill_record_table;
     let predicate = bill_record_table::id.eq(_request.id);
     let bill_record_result = bill_record_table::table

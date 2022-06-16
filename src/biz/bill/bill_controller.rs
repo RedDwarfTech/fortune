@@ -11,7 +11,7 @@ use rocket::response::content;
 use rocket::serde::json::Json;
 use rust_wheel::common::util::model_convert::box_rest_response;
 
-use crate::service::bill::bill_service::{add_bill, archive_bill_book, query_bill_record_detail, query_bill_records, query_recoverable_records};
+use crate::service::bill::bill_service::{add_bill, archive_bill_book, query_bill_record_detail, query_bill_records, query_recoverable_records, recover_bill_record};
 use crate::model::request::bill::bill_add_request::BillAddRequest;
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 use rocket_okapi::settings::OpenApiSettings;
@@ -88,6 +88,6 @@ pub fn recoverable(query: BillPageRequest) -> content::RawJson<String> {
 #[openapi(tag = "账单流水")]
 #[patch("/v1/recover?<query..>")]
 pub fn recover(query: BillPageRequest) -> content::RawJson<String> {
-    let contents = query_bill_records(&query);
+    let contents = recover_bill_record(&query);
     return box_rest_response(contents);
 }
