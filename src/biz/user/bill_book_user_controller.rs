@@ -1,9 +1,7 @@
 use okapi::openapi3::OpenApi;
 use rocket::response::content;
-use rocket::serde::json::Json;
 use rust_wheel::common::util::model_convert::box_rest_response;
 
-use crate::model::request::bill::bill_add_request::BillAddRequest;
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 use rocket_okapi::settings::OpenApiSettings;
 use crate::model::request::user::user_action_request::UserActionRequest;

@@ -1,14 +1,11 @@
-use rocket::futures::StreamExt;
-use diesel::{BoolExpressionMethods, ExpressionMethods, PgConnection, QueryDsl, RunQueryDsl, TextExpressionMethods};
-use diesel::result::Error;
+use diesel::{ ExpressionMethods, QueryDsl, RunQueryDsl, TextExpressionMethods};
 use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::config::db::config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
-use crate::model::diesel::fortune::fortune_custom_models::{BillBookAdd, BillBookContentAdd, BillBookRoleAdd, BillBookTemplateContents, BillRecordAdd};
+use crate::model::diesel::fortune::fortune_custom_models::{BillBookAdd, BillBookContentAdd, BillBookRoleAdd};
 
-use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookContent, BillBookTemplate, BillBookTemplateContent, BillRecord, Role};
-use crate::model::diesel::fortune::fortune_schema::bill_book::creator;
+use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookTemplate, BillBookTemplateContent, Role};
 use crate::model::request::bill::bill_book_request::BillBookRequest;
 
 pub fn get_bill_book_list(filter_name: Option<String>,login_user_info: &LoginUserInfo) -> Vec<BillBook> {

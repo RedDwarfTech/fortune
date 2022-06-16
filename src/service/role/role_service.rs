@@ -5,44 +5,12 @@ use rust_wheel::config::db::config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
 use crate::model::request::role::add_role_request::AddRoleRequest;
-use crate::model::{request::bill::bill_add_request::BillAddRequest, diesel::fortune::fortune_custom_models::BillRecordAdd};
 use crate::model::diesel::fortune::fortune_custom_models::BillBookRoleAdd;
-use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookRole, BillRecord, Role};
-use crate::model::diesel::fortune::fortune_schema::bill_book::archived;
+use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookRole};
 use crate::model::request::role::role_list_request::RoleListRequest;
 use crate::utils::database::get_connection;
 
-pub fn add_role(_request: Json<BillAddRequest>, login_user_info: &LoginUserInfo) -> Result<BillRecord, String> {
-    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
-    use crate::model::diesel::fortune::fortune_schema::bill_book as bill_book_table;
-    let predicate = bill_book_table::id.eq(_request.bill_book_id);
-    let bill_book_records = bill_book_table::table
-        .filter(predicate)
-        .load::<BillBook>(&connection)
-        .expect("get bill book failed");
-    if bill_book_records.is_empty() {
-        return Err("not found bill book".parse().unwrap());
-    }
-    if bill_book_records.get(0).unwrap().archived.to_owned() == 1 {
-        return Err("bill book archived".parse().unwrap());
-    }
-    let bill_record_add = BillRecordAdd {
-        created_time: get_current_millisecond(),
-        updated_time: get_current_millisecond(),
-        deleted: 0,
-        user_id: login_user_info.userId,
-        account_id: _request.account_id,
-        bill_book_id: _request.bill_book_id,
-        bill_book_contents_id: _request.bill_book_contents_id,
-        remark: _request.remark.to_owned(),
-    };
-    let insert_result = diesel::insert_into(crate::model::diesel::fortune::fortune_schema::bill_record::table)
-        .values(&bill_record_add)
-        .get_result::<BillRecord>(&connection);
-    Ok(insert_result.unwrap())
-}
-
-pub fn query_bill_book_roles(query: &RoleListRequest, login_user_info: &LoginUserInfo) -> Vec<BillBookRole> {
+pub fn query_bill_book_roles(query: &RoleListRequest, _login_user_info: &LoginUserInfo) -> Vec<BillBookRole> {
     use crate::model::diesel::fortune::fortune_schema::bill_book_role as bill_book_role_table;
     let connection = get_connection();
     let predicate = bill_book_role_table::dsl::bill_book_id.eq(query.bill_book_id);
