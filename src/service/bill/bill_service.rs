@@ -5,6 +5,7 @@ use rust_wheel::config::db::config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
 use crate::model::request::bill::bill_del_request::BillDelRequest;
+use crate::model::request::bill::bill_edit_request::BillEditRequest;
 use crate::model::{request::bill::bill_add_request::BillAddRequest, diesel::fortune::fortune_custom_models::BillRecordAdd};
 use crate::model::diesel::fortune::fortune_models::{BillBook, BillRecord};
 use crate::model::diesel::fortune::fortune_schema::bill_book::archived;
@@ -97,6 +98,13 @@ pub fn del_bill_record(_request: &BillDelRequest, login_user_info: &LoginUserInf
     let predicate = bill_record_table::id.eq(_request.id)
     .and(bill_record_table::user_id.eq(login_user_info.userId));
     diesel::delete(bill_record_table::table.filter(predicate)).execute(&connection);
+}
+
+pub fn edit_bill_record(_request: &BillEditRequest, login_user_info: &LoginUserInfo) {
+    use crate::diesel::BoolExpressionMethods;
+    let connection = get_connection();
+    use crate::model::diesel::fortune::fortune_schema::bill_record as bill_record_table;
+    
 }
 
 pub fn archive_bill_book(_request: &BillBookArchiveRequest) {
