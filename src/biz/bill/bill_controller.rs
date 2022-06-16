@@ -11,7 +11,8 @@ use rocket::response::content;
 use rocket::serde::json::Json;
 use rust_wheel::common::util::model_convert::box_rest_response;
 
-use crate::service::bill::bill_service::{add_bill, archive_bill_book, query_bill_record_detail, query_bill_records, query_recoverable_records, recover_bill_record};
+use crate::model::request::bill::bill_del_request::BillDelRequest;
+use crate::service::bill::bill_service::{add_bill, archive_bill_book, query_bill_record_detail, query_bill_records, query_recoverable_records, recover_bill_record, del_bill_record};
 use crate::model::request::bill::bill_add_request::BillAddRequest;
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 use rocket_okapi::settings::OpenApiSettings;
@@ -21,7 +22,7 @@ use crate::model::request::bill::bill_detail_request::BillDetailRequest;
 use crate::model::request::bill::bill_page_request::BillPageRequest;
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
-    openapi_get_routes_spec![settings: add, page, detail, archive, recoverable, recover]
+    openapi_get_routes_spec![settings: add, page, detail, archive, recoverable, recover, del, edit]
 }
 
 /// # 新增记账流水
@@ -60,6 +61,26 @@ pub fn page(query: BillPageRequest) -> content::RawJson<String> {
 pub fn detail(query: BillDetailRequest) -> content::RawJson<String> {
     let contents = query_bill_record_detail(&query);
     return box_rest_response(contents);
+}
+
+/// # 删除记账流水
+///
+/// 删除记账流水
+#[openapi(tag = "账单流水")]
+#[delete("/v1/delete?<query..>")]
+pub fn del(query: BillDelRequest, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+    del_bill_record(&query, &login_user_info);
+    return box_rest_response("ok");
+}
+
+/// # 编辑记账流水
+///
+/// 编辑记账流水
+#[openapi(tag = "账单流水")]
+#[patch("/v1/delete?<query..>")]
+pub fn edit(query: BillDelRequest, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+    del_bill_record(&query, &login_user_info);
+    return box_rest_response("ok");
 }
 
 /// # 封账(VIP)
