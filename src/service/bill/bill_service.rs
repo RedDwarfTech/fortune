@@ -43,22 +43,16 @@ pub fn add_bill(_request: Json<BillAddRequest>, login_user_info: &LoginUserInfo)
     Ok(insert_result.unwrap())
 }
 
-pub fn query_bill_records(_request: &BillPageRequest) {
-    let bill_record_add = BillRecordAdd {
-        created_time: todo!(),
-        updated_time: todo!(),
-        deleted: todo!(),
-        user_id: todo!(),
-        account_id: 0,
-        bill_book_id: 0,
-        bill_book_contents_id: 0,
-        remark: todo!(),
-    };
-    diesel::insert_into(crate::model::diesel::fortune::fortune_schema::bill_record::table)
-        .values(&bill_record_add)
-        .on_conflict_do_nothing()
-        .execute(&get_connection())
-        .unwrap();
+pub fn query_bill_records(_request: &BillPageRequest) -> Vec<BillRecord>{
+    use crate::model::diesel::fortune::fortune_schema::bill_record as bill_record_table;
+    use crate::diesel::BoolExpressionMethods;
+    let predicate = bill_record_table::dsl::bill_book_id.eq(_request.bill_book_id)
+    .and(bill_record_table::dsl::deleted.eq(0));
+    let bill_records = bill_record_table::table
+    .filter(predicate)
+    .get_results::<BillRecord>(&get_connection())
+    .expect("get bill records failed");
+    return bill_records;
 }
 
 pub fn query_recoverable_records(query: &BillPageRequest) -> Vec<BillRecord>{
