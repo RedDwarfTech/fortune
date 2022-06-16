@@ -1,19 +1,14 @@
-use diesel::{ExpressionMethods, QueryDsl, QueryResult, RunQueryDsl};
-use rocket::futures::TryFutureExt;
+use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::config::db::config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
+use crate::model::request::role::add_role_request::AddRoleRequest;
 use crate::model::{request::bill::bill_add_request::BillAddRequest, diesel::fortune::fortune_custom_models::BillRecordAdd};
 use crate::model::diesel::fortune::fortune_custom_models::BillBookRoleAdd;
 use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookRole, BillRecord, Role};
 use crate::model::diesel::fortune::fortune_schema::bill_book::archived;
-use crate::model::diesel::fortune::fortune_schema::bill_book::dsl::bill_book;
-use crate::model::request::bill::bill_book_archive_request::BillBookArchiveRequest;
-use crate::model::request::bill::bill_detail_request::BillDetailRequest;
-use crate::model::request::bill::bill_page_request::BillPageRequest;
-use crate::model::request::role::add_role_request::AddRoleRequest;
 use crate::model::request::role::role_list_request::RoleListRequest;
 use crate::utils::database::get_connection;
 
@@ -73,7 +68,6 @@ pub fn add_bill_book_role(query: &Json<AddRoleRequest>, login_user_info: &LoginU
     if bill_book_record.get(0).unwrap().creator != login_user_info.userId {
         return Err("only owner could add role".parse().unwrap());
     }
-    use crate::model::diesel::fortune::fortune_schema::role as role_table;
     let bill_book_role_add = BillBookRoleAdd{
         created_time: get_current_millisecond(),
         updated_time: get_current_millisecond(),

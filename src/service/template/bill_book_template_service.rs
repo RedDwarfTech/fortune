@@ -1,8 +1,7 @@
 use diesel::{BoolExpressionMethods, ExpressionMethods, QueryDsl, RunQueryDsl,TextExpressionMethods};
 use rocket::serde::json::Json;
-use rust_wheel::common::util::model_convert::{box_error_rest_response, box_error_type_rest_response, box_type_rest_response, map_entity};
+use rust_wheel::common::util::model_convert::{box_error_type_rest_response, box_type_rest_response, map_entity};
 
-use rust_wheel::config::db::config;
 use rust_wheel::model::response::api_response::ApiResponse;
 
 use crate::model::diesel::fortune::fortune_models::BillBookTemplate;

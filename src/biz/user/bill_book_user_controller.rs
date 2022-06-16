@@ -7,7 +7,7 @@ use crate::model::request::bill::bill_add_request::BillAddRequest;
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 use rocket_okapi::settings::OpenApiSettings;
 use crate::model::request::user::user_action_request::UserActionRequest;
-use crate::service::user::bill_book_user_service::user_action_service;
+use crate::service::user::bill_book_user_service::query_user_actions;
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
     openapi_get_routes_spec![settings: page]
