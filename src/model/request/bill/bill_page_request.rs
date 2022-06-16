@@ -9,7 +9,7 @@ pub struct BillPageRequest {
     /// 页数
     pub pageNum: i64,
     /// 每页大小
-    pub pageSize: i32,
+    pub pageSize: i64,
     /// 账本ID
     pub bill_book_id: i64
 }

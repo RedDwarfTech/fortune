@@ -1,6 +1,5 @@
 use diesel::{BoolExpressionMethods, QueryDsl, RunQueryDsl};
-use diesel::dsl::{any, not};
-use rocket::futures::future::err;
+use diesel::dsl::{any};
 use rocket::serde::json::Json;
 use rust_wheel::common::util::convert_to_tree_i64::convert_to_tree;
 use rust_wheel::common::util::model_convert::map_entity;
@@ -10,8 +9,6 @@ use rust_wheel::model::user::login_user_info::LoginUserInfo;
 use crate::diesel::ExpressionMethods;
 use crate::model::diesel::fortune::fortune_custom_models::BillBookContentAdd;
 use crate::model::diesel::fortune::fortune_models::BillBookContent;
-use crate::model::diesel::fortune::fortune_schema::bill_book_template_contents::parent_id;
-use crate::model::diesel::fortune::fortune_schema::bill_record::bill_book_id;
 use crate::model::request::contents::add_contents_request::AddContentsRequest;
 use crate::model::request::contents::del_contents_request::DelContentsRequest;
 use crate::model::request::contents::edit_contents_request::EditContentsRequest;
@@ -38,10 +35,10 @@ pub fn content_tree_query(filter_content_type: i32, filter_book_id: i64) -> Vec<
 }
 
 fn convert_to_tree_impl(contents: &Vec<FortuneContentResponse>) -> Vec<FortuneContentResponse> {
-    let mut root_element: Vec<_> = contents.iter()
+    let root_element: Vec<_> = contents.iter()
         .filter(|content| content.parent_id == 0)
         .collect();
-    let mut sub_element: Vec<_> = contents.iter()
+    let sub_element: Vec<_> = contents.iter()
         .filter(|content| content.parent_id != 0)
         .collect();
     let result = convert_to_tree(&root_element, &sub_element);
