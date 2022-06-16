@@ -4,6 +4,7 @@ use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::config::db::config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
+use crate::model::diesel::fortune::fortune_custom_models::BillRecordUpdate;
 use crate::model::request::bill::bill_del_request::BillDelRequest;
 use crate::model::request::bill::bill_edit_request::BillEditRequest;
 use crate::model::{request::bill::bill_add_request::BillAddRequest, diesel::fortune::fortune_custom_models::BillRecordAdd};
@@ -100,11 +101,20 @@ pub fn del_bill_record(_request: &BillDelRequest, login_user_info: &LoginUserInf
     diesel::delete(bill_record_table::table.filter(predicate)).execute(&connection);
 }
 
-pub fn edit_bill_record(_request: &BillEditRequest, login_user_info: &LoginUserInfo) {
+pub fn edit_bill_record(request: &BillEditRequest, login_user_info: &LoginUserInfo) {
     use crate::diesel::BoolExpressionMethods;
     let connection = get_connection();
     use crate::model::diesel::fortune::fortune_schema::bill_record as bill_record_table;
-    
+    let predicate = bill_record_table::dsl::id.eq(request.id);
+
+    // https://diesel.rs/guides/all-about-updates.html
+    // https://stackoverflow.com/questions/72249171/rust-diesel-conditionally-update-fields
+    diesel::update(bill_record_table::table.filter(predicate))
+        .set(&BillRecordUpdate{
+            amount: Some(request.amount),
+        })
+        .get_result::<BillRecord>(&connection)
+        .expect("unable to update channel");
 }
 
 pub fn archive_bill_book(_request: &BillBookArchiveRequest) {

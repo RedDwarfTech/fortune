@@ -6,6 +6,8 @@ use rocket_okapi::okapi::schemars;
 #[derive(Debug, PartialEq, Eq, Deserialize, Serialize, JsonSchema)]
 #[allow(non_snake_case)]
 pub struct BillEditRequest {
+    /// 流水ID
+    pub id: i64,
     /// 账本ID
     pub bill_book_id: i64,
     /// 账户类型ID

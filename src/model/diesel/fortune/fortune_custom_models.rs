@@ -70,3 +70,9 @@ pub struct BillBookRoleAdd {
     pub role_type: i32,
     pub name: String,
 }
+
+#[derive(AsChangeset)]
+#[table_name = "bill_record"]
+pub struct BillRecordUpdate {
+    pub amount: Option<i64>
+}
