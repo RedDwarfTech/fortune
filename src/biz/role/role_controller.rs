@@ -29,7 +29,7 @@ pub fn list(query: RoleListRequest, login_user_info: LoginUserInfo) -> content::
 ///
 /// 查询账本角色详情，账本之间角色独立。
 #[openapi(tag = "角色")]
-#[get("/v1/list?<query..>")]
+#[get("/v1/detail?<query..>")]
 pub fn detail(query: BillBookRoleRequest, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let roles = query_bill_book_roles_detail(&query,&login_user_info);
     return box_rest_response(roles);

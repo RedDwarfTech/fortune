@@ -1,7 +1,6 @@
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
-use rust_wheel::config::db::config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 
 use crate::model::request::role::add_role_request::AddRoleRequest;
@@ -36,7 +35,7 @@ pub fn query_bill_book_roles_detail(query: &BillBookRoleRequest, _login_user_inf
 pub fn add_bill_book_role(query: &Json<AddRoleRequest>, login_user_info: &LoginUserInfo) -> Result<BillBookRole, String> {
     use crate::model::diesel::fortune::fortune_schema::bill_book_role as bill_book_role_table;
     use crate::model::diesel::fortune::fortune_schema::bill_book as bill_book_table;
-    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
+    let connection = get_connection();
     let predicate = bill_book_table::dsl::id.eq(query.bill_book_id);
     let bill_book_record = bill_book_table::table
         .filter(predicate)
