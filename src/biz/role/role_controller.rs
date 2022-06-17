@@ -71,3 +71,4 @@ pub fn del(query: RoleListRequest, login_user_info: LoginUserInfo) -> content::R
     let roles = query_bill_book_roles(&query,&login_user_info);
     return box_rest_response(roles);
 }
+
