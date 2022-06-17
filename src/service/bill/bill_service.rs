@@ -101,8 +101,7 @@ pub fn del_bill_record(_request: &BillDelRequest, login_user_info: &LoginUserInf
     diesel::delete(bill_record_table::table.filter(predicate)).execute(&connection);
 }
 
-pub fn edit_bill_record(request: &BillEditRequest, login_user_info: &LoginUserInfo) {
-    use crate::diesel::BoolExpressionMethods;
+pub fn edit_bill_record(request: &BillEditRequest, _login_user_info: &LoginUserInfo) {
     let connection = get_connection();
     use crate::model::diesel::fortune::fortune_schema::bill_record as bill_record_table;
     let predicate = bill_record_table::dsl::id.eq(request.id);

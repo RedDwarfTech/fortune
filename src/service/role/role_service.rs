@@ -7,6 +7,7 @@ use rust_wheel::model::user::login_user_info::LoginUserInfo;
 use crate::model::request::role::add_role_request::AddRoleRequest;
 use crate::model::diesel::fortune::fortune_custom_models::BillBookRoleAdd;
 use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookRole};
+use crate::model::request::role::bill_book_role_request::BillBookRoleRequest;
 use crate::model::request::role::role_list_request::RoleListRequest;
 use crate::utils::database::get_connection;
 
@@ -17,6 +18,17 @@ pub fn query_bill_book_roles(query: &RoleListRequest, _login_user_info: &LoginUs
     let role_results = bill_book_role_table::table
         .filter(predicate)
         .get_results::<BillBookRole>(&connection)
+        .expect("get results failed");
+    return role_results;
+}
+
+pub fn query_bill_book_roles_detail(query: &BillBookRoleRequest, _login_user_info: &LoginUserInfo) -> BillBookRole {
+    use crate::model::diesel::fortune::fortune_schema::bill_book_role as bill_book_role_table;
+    let connection = get_connection();
+    let predicate = bill_book_role_table::dsl::id.eq(query.id);
+    let role_results = bill_book_role_table::table
+        .filter(predicate)
+        .get_result::<BillBookRole>(&connection)
         .expect("get results failed");
     return role_results;
 }

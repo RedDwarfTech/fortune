@@ -7,11 +7,12 @@ use rocket_okapi::{openapi, openapi_get_routes_spec};
 use rocket_okapi::settings::OpenApiSettings;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 use crate::model::request::role::add_role_request::AddRoleRequest;
+use crate::model::request::role::bill_book_role_request::BillBookRoleRequest;
 use crate::model::request::role::role_list_request::RoleListRequest;
-use crate::service::role::role_service::{add_bill_book_role, query_bill_book_roles};
+use crate::service::role::role_service::{add_bill_book_role, query_bill_book_roles, query_bill_book_roles_detail};
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
-    openapi_get_routes_spec![settings: list, add, edit, del]
+    openapi_get_routes_spec![settings: list, add, edit, del, detail]
 }
 
 /// # 查询账本角色列表
@@ -21,6 +22,16 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 #[get("/v1/list?<query..>")]
 pub fn list(query: RoleListRequest, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let roles = query_bill_book_roles(&query,&login_user_info);
+    return box_rest_response(roles);
+}
+
+/// # 查询账本角色详情
+///
+/// 查询账本角色详情，账本之间角色独立。
+#[openapi(tag = "角色")]
+#[get("/v1/list?<query..>")]
+pub fn detail(query: BillBookRoleRequest, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+    let roles = query_bill_book_roles_detail(&query,&login_user_info);
     return box_rest_response(roles);
 }
 
