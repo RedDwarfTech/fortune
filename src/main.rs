@@ -19,6 +19,7 @@ use biz::contents::contents_controller;
 use biz::template::bill_book_template_controller;
 use biz::bill::bill_controller;
 use biz::bill::bill_book_controller;
+use biz::bill::bill_book_account_controller;
 use biz::user::user_action_controller;
 use biz::user::bill_book_user_controller;
 use biz::role::role_controller;
@@ -76,6 +77,7 @@ pub fn create_server() -> Rocket<Build> {
         "/contents" => contents_controller::get_routes_and_docs(&openapi_settings),
         "/bill" => bill_controller::get_routes_and_docs(&openapi_settings),
         "/bill-book" => bill_book_controller::get_routes_and_docs(&openapi_settings),
+        "/bill-book-account" => bill_book_account_controller::get_routes_and_docs(&openapi_settings),
         "/user-action" => user_action_controller::get_routes_and_docs(&openapi_settings),
         "/role" => role_controller::get_routes_and_docs(&openapi_settings),
         "/permission" => permission_controller::get_routes_and_docs(&openapi_settings),

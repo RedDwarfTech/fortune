@@ -12,7 +12,7 @@ use crate::model::request::role::role_list_request::RoleListRequest;
 use crate::service::role::role_service::{add_bill_book_role, query_bill_book_roles, query_bill_book_roles_detail};
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
-    openapi_get_routes_spec![settings: list, add, edit, del, detail]
+    openapi_get_routes_spec![settings: list, add, edit, del, detail, bind_user, unbind_user]
 }
 
 /// # 查询账本角色列表
@@ -41,6 +41,40 @@ pub fn detail(query: BillBookRoleRequest, login_user_info: LoginUserInfo) -> con
 #[openapi(tag = "角色")]
 #[post("/v1/add", data = "<request>")]
 pub fn add(request: Json<AddRoleRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+    let roles = add_bill_book_role(&request,&login_user_info);
+    return match roles {
+        Ok(v) => {
+            box_rest_response(v)
+        },
+        Err(e) => {
+            box_rest_response(e.to_string())
+        }
+    }
+}
+
+/// # 角色绑定用户
+///
+/// 为当前账本角色绑定用户。
+#[openapi(tag = "角色")]
+#[put("/v1/bind-user", data = "<request>")]
+pub fn bind_user(request: Json<AddRoleRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+    let roles = add_bill_book_role(&request,&login_user_info);
+    return match roles {
+        Ok(v) => {
+            box_rest_response(v)
+        },
+        Err(e) => {
+            box_rest_response(e.to_string())
+        }
+    }
+}
+
+/// # 角色解绑用户
+///
+/// 为当前账本角色用户解除绑定。
+#[openapi(tag = "角色")]
+#[delete("/v1/unbind-user", data = "<request>")]
+pub fn unbind_user(request: Json<AddRoleRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
     let roles = add_bill_book_role(&request,&login_user_info);
     return match roles {
         Ok(v) => {
