@@ -21,6 +21,20 @@ pub struct BillBook {
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[table_name = "bill_book_account"]
+pub struct BillBookAccount {
+    pub id: i64,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub deleted: i32,
+    pub creator: i64,
+    pub remark: String,
+    pub account_type: i32,
+    pub name: String,
+    pub bill_book_id: i64,
+}
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
 #[table_name = "bill_book_contents"]
 pub struct BillBookContent {
     pub id: i64,

@@ -16,6 +16,7 @@ filter = { only_tables = [
     "user_role",
     "permission",
     "role_permission",
-    "bill_book_role"
+    "bill_book_role",
+    "bill_book_account"
 ] }
 

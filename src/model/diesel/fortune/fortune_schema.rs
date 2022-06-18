@@ -12,6 +12,20 @@ table! {
 }
 
 table! {
+    bill_book_account (id) {
+        id -> Int8,
+        created_time -> Int8,
+        updated_time -> Int8,
+        deleted -> Int4,
+        creator -> Int8,
+        remark -> Varchar,
+        account_type -> Int4,
+        name -> Varchar,
+        bill_book_id -> Int8,
+    }
+}
+
+table! {
     bill_book_contents (id) {
         id -> Int8,
         created_time -> Int8,
@@ -157,6 +171,7 @@ table! {
 
 allow_tables_to_appear_in_same_query!(
     bill_book,
+    bill_book_account,
     bill_book_contents,
     bill_book_role,
     bill_book_template,
