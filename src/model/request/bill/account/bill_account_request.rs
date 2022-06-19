@@ -7,13 +7,5 @@ use rocket_okapi::okapi::schemars;
 #[allow(non_snake_case)]
 pub struct BillAccountRequest {
     /// 账本ID
-    pub bill_book_id: i64,
-    /// 账户类型ID
-    pub account_id: i32,
-    /// 流水分类ID
-    pub bill_book_contents_id: i64,
-    /// 金额
-    pub amount: i64,
-    /// 备注
-    pub remark: Option<String>
+    pub bill_book_id: i64
 }

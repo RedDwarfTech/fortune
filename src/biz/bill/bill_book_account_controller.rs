@@ -1,4 +1,6 @@
+use diesel::data_types::PgNumeric;
 use okapi::openapi3::OpenApi;
+use okapi::schemars::_private::NoSerialize;
 /**
 To make the clion show unused imports
 

@@ -76,3 +76,9 @@ pub struct BillBookRoleAdd {
 pub struct BillRecordUpdate {
     pub amount: Option<i64>
 }
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[table_name = "bill_record"]
+pub struct BillRecordGroup {
+    pub account_id: i32,
+}

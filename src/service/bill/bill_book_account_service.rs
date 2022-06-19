@@ -1,17 +1,16 @@
-use diesel::{ ExpressionMethods, QueryDsl, RunQueryDsl, TextExpressionMethods};
-use diesel::dsl::sum;
+use bigdecimal::BigDecimal;
+use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
+use diesel::data_types::PgNumeric;
 use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
-use rust_wheel::config::db::config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 use crate::model::diesel::fortune::fortune_custom_models::{BillBookAdd, BillBookContentAdd, BillBookRoleAdd};
-
 use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookAccount, BillBookTemplate, BillBookTemplateContent, Role};
 use crate::model::request::bill::account::bill_account_request::BillAccountRequest;
 use crate::model::request::bill::bill_book_request::BillBookRequest;
 use crate::utils::database::get_connection;
 
-pub fn get_bill_book_account_list(query: &BillAccountRequest, login_user_info: &LoginUserInfo) -> Vec<BillBook> {
+pub fn get_bill_book_account_list(request: &BillAccountRequest, login_user_info: &LoginUserInfo) -> Vec<(i64, i32)>{
     let connection = get_connection();
     use crate::model::diesel::fortune::fortune_schema::bill_book as bill_book_table;
     let mut query = bill_book_table::table.into_boxed::<diesel::pg::Pg>();
@@ -19,17 +18,29 @@ pub fn get_bill_book_account_list(query: &BillAccountRequest, login_user_info: &
     let user_bill_books = query
         .load::<BillBook>(&connection)
         .expect("error get user bill book");
-    return user_bill_books;
+    let result = get_bill_book_account_sum(request);
+    return result.unwrap();
 }
 
-fn get_bill_book_account_sum(request: &BillAccountRequest){
+///
+/// diesel聚合查询遇到的问题：
+/// https://stackoverflow.com/questions/72670161/how-to-using-rust-diesel-to-do-the-group-by-query
+/// 如何避免的方案：
+/// https://github.com/diesel-rs/diesel/issues/1781
+/// PostgreSQL里bigint求和返回的是numeric类型的数据
+/// https://stackoverflow.com/questions/72675358/received-more-than-8-bytes-decoding-i64-was-an-expression-of-a-different-type-m
+/// numeric类型的数据在diesel里用PgNumeric来接收
+/// 但是不知道如何将PgNumeric的数据转换为BigDecimal
+/// https://stackoverflow.com/questions/72676400/how-to-get-the-exactly-value-from-the-pgnumeric
+pub fn get_bill_book_account_sum(request: &BillAccountRequest) -> Result<Vec<(i64, i32)>, diesel::result::Error>{
     use crate::diesel::GroupByDsl;
     use crate::model::diesel::fortune::fortune_schema::bill_record as bill_record_table;
-    let source = bill_record_table::table
-        .group_by(bill_record_table::dsl::account_id)
-        //.select((sum(bill_record_table::dsl::amount), bill_record_table::dsl::account_id))
+    let source_query = bill_record_table::table
+        .group_by(bill_record_table::account_id)
+        .select((diesel::dsl::sql::<diesel::sql_types::BigInt>("SUM(CAST(amount AS Integer))"),bill_record_table::account_id))
         .filter(bill_record_table::dsl::bill_book_id.eq(request.bill_book_id));
-    source.execute(&get_connection()).is_ok();
+    let result = source_query.load::<(i64,i32)>(&get_connection());
+    return result;
 }
 
 pub fn get_bill_book_by_id(filter_bill_book_id: &i64) -> BillBook{
