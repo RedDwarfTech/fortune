@@ -1,6 +1,4 @@
-use bigdecimal::BigDecimal;
 use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
-use diesel::data_types::PgNumeric;
 use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;

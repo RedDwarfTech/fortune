@@ -3,7 +3,6 @@ Fortune is the JiZhangBa app backend rest api service.
 
 # Build
 
-
 ```bash
 # fetch code
 git clone https://github.com/RedDwarfTech/fortune.git
@@ -12,6 +11,8 @@ cargo build
 # use the specific url
 RUSTUP_DIST_SERVER=https://static.rust-lang.org cargo build
 # use the University of Science and Technology of China mirror
+# https://github.com/tuna/issues/issues/1513
+# https://github.com/tuna/issues/issues/1346
 RUSTUP_DIST_SERVER=https://mirrors.ustc.edu.cn/rust-static cargo build
 ```
 

@@ -20,7 +20,6 @@ rocket_okapi = { git = "https://github.com/GREsau/okapi.git", features = ["swagg
 
 serde = { version = "1.0.64", features = ["derive"] }
 diesel = { version = "1.4.8", features = ["postgres","64-column-tables","chrono","serde_json"] }
-bigdecimal = "0.3.0"
 
 # reddwarf public component
 rust_wheel = { git = "https://github.com/jiangxiaoqiang/rust_wheel.git" }
