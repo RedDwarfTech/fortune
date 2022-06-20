@@ -6,7 +6,9 @@ use rust_wheel::model::user::login_user_info::LoginUserInfo;
 use crate::model::diesel::fortune::fortune_custom_models::{BillBookAdd, BillBookContentAdd, BillBookRoleAdd};
 
 use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookTemplate, BillBookTemplateContent, Role};
-use crate::model::request::bill::bill_book_request::BillBookRequest;
+use crate::model::request::bill::book::bill_book_edit_request::BillBookEditRequest;
+use crate::model::request::bill::book::bill_book_request::BillBookRequest;
+use crate::utils::database::get_connection;
 
 pub fn get_bill_book_list(filter_name: Option<String>,login_user_info: &LoginUserInfo) -> Vec<BillBook> {
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
@@ -20,6 +22,15 @@ pub fn get_bill_book_list(filter_name: Option<String>,login_user_info: &LoginUse
         .load::<BillBook>(&connection)
         .expect("error get user bill book");
     return user_bill_books;
+}
+
+pub fn edit_bill_book(request: &Json<BillBookEditRequest>) -> BillBook {
+    use crate::model::diesel::fortune::fortune_schema::bill_book::dsl::*;
+    let predicate = id.eq(request.bill_book_id);
+    let update_result = diesel::update(bill_book.filter(predicate))
+        .set((name.eq(request.name.to_string())))
+        .get_result(&get_connection());
+    return update_result.unwrap();
 }
 
 pub fn get_bill_book_by_id(filter_bill_book_id: &i64) -> BillBook{

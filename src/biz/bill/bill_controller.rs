@@ -18,9 +18,9 @@ use crate::model::request::bill::bill_add_request::BillAddRequest;
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 use rocket_okapi::settings::OpenApiSettings;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
-use crate::model::request::bill::bill_book_archive_request::BillBookArchiveRequest;
 use crate::model::request::bill::bill_detail_request::BillDetailRequest;
 use crate::model::request::bill::bill_page_request::BillPageRequest;
+use crate::model::request::bill::book::bill_book_archive_request::BillBookArchiveRequest;
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
     openapi_get_routes_spec![settings: add, page, detail, archive, recoverable, recover, del, edit]

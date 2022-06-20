@@ -1,4 +1,4 @@
-use diesel::{ExpressionMethods, QueryDsl, QueryResult, RunQueryDsl};
+use diesel::{ExpressionMethods, QueryDsl, RunQueryDsl};
 use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::config::db::config;
@@ -7,11 +7,11 @@ use rust_wheel::model::user::login_user_info::LoginUserInfo;
 use crate::model::diesel::fortune::fortune_custom_models::BillRecordUpdate;
 use crate::model::request::bill::bill_del_request::BillDelRequest;
 use crate::model::request::bill::bill_edit_request::BillEditRequest;
+use crate::model::request::bill::book::bill_book_archive_request::BillBookArchiveRequest;
 use crate::model::{request::bill::bill_add_request::BillAddRequest, diesel::fortune::fortune_custom_models::BillRecordAdd};
 use crate::model::diesel::fortune::fortune_models::{BillBook, BillRecord};
 use crate::model::diesel::fortune::fortune_schema::bill_book::archived;
 use crate::model::diesel::fortune::fortune_schema::bill_book::dsl::bill_book;
-use crate::model::request::bill::bill_book_archive_request::BillBookArchiveRequest;
 use crate::model::request::bill::bill_detail_request::BillDetailRequest;
 use crate::model::request::bill::bill_page_request::BillPageRequest;
 use crate::utils::database::get_connection;

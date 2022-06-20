@@ -13,8 +13,9 @@ use rocket_okapi::settings::OpenApiSettings;
 use rust_wheel::common::util::model_convert::box_rest_response;
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
-use crate::model::request::bill::bill_book_request::BillBookRequest;
-use crate::service::bill::bill_book_service::{add_bill_book, get_bill_book_by_id, get_bill_book_list};
+use crate::model::request::bill::book::bill_book_edit_request::BillBookEditRequest;
+use crate::model::request::bill::book::bill_book_request::BillBookRequest;
+use crate::service::bill::bill_book_service::{add_bill_book, get_bill_book_by_id, get_bill_book_list, edit_bill_book};
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
     openapi_get_routes_spec![settings: list, add, detail]
@@ -37,6 +38,16 @@ pub fn list(name: Option<String>, login_user_info: LoginUserInfo) -> content::Ra
 #[get("/v1/detail/<id>")]
 pub fn detail(id: i64) -> content::RawJson<String> {
     let contents = get_bill_book_by_id(&id);
+    return box_rest_response(contents);
+}
+
+/// # 编辑账本
+///
+/// 编辑账本信息
+#[openapi(tag = "账本")]
+#[patch("/v1/edit", data = "<request>")]
+pub fn edit(request: Json<BillBookEditRequest>) -> content::RawJson<String> {
+    let contents = edit_bill_book(&request);
     return box_rest_response(contents);
 }
 

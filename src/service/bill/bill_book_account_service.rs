@@ -5,7 +5,7 @@ use rust_wheel::model::user::login_user_info::LoginUserInfo;
 use crate::model::diesel::fortune::fortune_custom_models::{BillBookAdd, BillBookContentAdd, BillBookRoleAdd};
 use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookAccount, BillBookTemplate, BillBookTemplateContent, Role};
 use crate::model::request::bill::account::bill_account_request::BillAccountRequest;
-use crate::model::request::bill::bill_book_request::BillBookRequest;
+use crate::model::request::bill::book::bill_book_request::BillBookRequest;
 use crate::model::response::bill::bill_book_account_response::BillBookAccountResponse;
 use crate::utils::database::get_connection;
 
