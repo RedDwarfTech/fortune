@@ -91,7 +91,7 @@ fn update_contents_id(pk_id: &i64){
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let predicate = id.eq(pk_id);
     diesel::update(bill_book_contents.filter(predicate))
-        .set((content_id.eq(pk_id)))
+        .set(content_id.eq(pk_id))
         .execute(&connection)
         .expect("unable to update bill book contents");
 }
@@ -131,7 +131,7 @@ fn delete_contents(ids: &Vec<i64>, filter_bill_book_id: &i64) -> Result<String, 
     use crate::model::diesel::fortune::fortune_schema::bill_book_contents::dsl::*;
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let predicate = id.eq(any(&ids)).and(bill_book_id.eq(filter_bill_book_id));
-    let delete_result = diesel::delete(bill_book_contents.filter(predicate))
+    diesel::delete(bill_book_contents.filter(predicate))
         .execute(&connection);
     Ok("ok".parse().unwrap())
 }
@@ -166,7 +166,7 @@ fn edit_bill_contents(filter_id: &i64, filter_bill_book_id: &i64, new_name: &Str
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let predicate = id.eq(filter_id).and(bill_book_id.eq(filter_bill_book_id));
     diesel::update(bill_book_contents.filter(predicate))
-        .set((name.eq(new_name)))
+        .set(name.eq(new_name))
         .execute(&connection)
         .expect("unable to update bill book contents");
     Ok("ok".parse().unwrap())

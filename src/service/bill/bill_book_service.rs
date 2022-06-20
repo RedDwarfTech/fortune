@@ -28,7 +28,7 @@ pub fn edit_bill_book(request: &Json<BillBookEditRequest>) -> BillBook {
     use crate::model::diesel::fortune::fortune_schema::bill_book::dsl::*;
     let predicate = id.eq(request.bill_book_id);
     let update_result = diesel::update(bill_book.filter(predicate))
-        .set((name.eq(request.name.to_string())))
+        .set(name.eq(request.name.to_string()))
         .get_result(&get_connection());
     return update_result.unwrap();
 }

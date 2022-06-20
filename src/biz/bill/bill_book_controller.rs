@@ -10,15 +10,17 @@ https://stackoverflow.com/questions/61077692/how-can-i-fix-unused-imports-in-rus
 use rocket::response::content;
 use rocket::serde::json::Json;
 use rocket_okapi::settings::OpenApiSettings;
-use rust_wheel::common::util::model_convert::box_rest_response;
+use rust_wheel::common::util::model_convert::{box_rest_response, box_type_rest_response};
 use rocket_okapi::{openapi, openapi_get_routes_spec};
+use rust_wheel::model::response::api_response::ApiResponse;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
 use crate::model::request::bill::book::bill_book_edit_request::BillBookEditRequest;
 use crate::model::request::bill::book::bill_book_request::BillBookRequest;
+use crate::model::response::bill::book::bill_book_response::BillBookResponse;
 use crate::service::bill::bill_book_service::{add_bill_book, get_bill_book_by_id, get_bill_book_list, edit_bill_book};
 
 pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, OpenApi) {
-    openapi_get_routes_spec![settings: list, add, detail]
+    openapi_get_routes_spec![settings: list, add, detail, edit]
 }
 
 /// # 查询当前用户账本列表
@@ -46,9 +48,11 @@ pub fn detail(id: i64) -> content::RawJson<String> {
 /// 编辑账本信息
 #[openapi(tag = "账本")]
 #[patch("/v1/edit", data = "<request>")]
-pub fn edit(request: Json<BillBookEditRequest>) -> content::RawJson<String> {
+pub fn edit(request: Json<BillBookEditRequest>) -> Json<ApiResponse<BillBookResponse>> {
     let contents = edit_bill_book(&request);
-    return box_rest_response(contents);
+    let bill_book_response = BillBookResponse::from(&contents);
+    let boxed_response = box_type_rest_response(bill_book_response);
+    return Json::from(boxed_response);
 }
 
 /// # 新增账本

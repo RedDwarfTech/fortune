@@ -1,6 +1,5 @@
 use rust_wheel::common::util::convert_to_tree_i64::IntoTree;
 use serde::Serialize;
-use crate::model::diesel::fortune::fortune_custom_models::BillBookTemplateContents;
 use crate::model::diesel::fortune::fortune_models::BillBookContent;
 
 #[derive(Debug, Serialize)]
