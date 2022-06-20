@@ -25,11 +25,11 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 
 /// # 查询当前用户账本账户列表
 ///
-/// 查询当前用户所属的账本，前期查询当前用户创建的账本，后期可查询用户创建的和参与的账本
+/// 按照账户分类查看
 #[openapi(tag = "账本账户")]
 #[get("/v1/list?<query..>")]
-pub fn list(query: BillAccountRequest, login_user_info: LoginUserInfo) -> content::RawJson<String> {
-    let contents = get_bill_book_account_list(&query, &login_user_info);
+pub fn list(query: BillAccountRequest ) -> content::RawJson<String> {
+    let contents = get_bill_book_account_list(&query);
     return box_rest_response(contents);
 }
 
