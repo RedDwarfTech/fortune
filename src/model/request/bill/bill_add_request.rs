@@ -9,7 +9,7 @@ pub struct BillAddRequest {
     /// 账本ID
     pub bill_book_id: i64,
     /// 账户类型ID
-    pub account_id: i32,
+    pub account_id: i64,
     /// 流水分类ID
     pub bill_book_contents_id: i64,
     /// 金额

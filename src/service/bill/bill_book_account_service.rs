@@ -6,17 +6,45 @@ use crate::model::diesel::fortune::fortune_custom_models::{BillBookAdd, BillBook
 use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookAccount, BillBookTemplate, BillBookTemplateContent, Role};
 use crate::model::request::bill::account::bill_account_request::BillAccountRequest;
 use crate::model::request::bill::bill_book_request::BillBookRequest;
+use crate::model::response::bill::bill_book_account_response::BillBookAccountResponse;
 use crate::utils::database::get_connection;
 
-pub fn get_bill_book_account_list(request: &BillAccountRequest, login_user_info: &LoginUserInfo) -> Vec<(i64, i32)>{
-    let connection = get_connection();
-    use crate::model::diesel::fortune::fortune_schema::bill_book as bill_book_table;
-    let mut query = bill_book_table::table.into_boxed::<diesel::pg::Pg>();
-    query = query.filter(bill_book_table::creator.eq(login_user_info.userId));
-    let user_bill_books = query
-        .load::<BillBook>(&connection)
-        .expect("error get user bill book");
-    let result = get_bill_book_account_sum(request);
+pub fn get_bill_book_account_list(request: &BillAccountRequest) -> Vec<(i64, i64)>{
+    let bill_book_accounts = get_bill_account_list(request);
+    let result = get_bill_book_account_sum(request).unwrap();
+    for bill_book_account in bill_book_accounts.iter() {
+        let acc:Vec<(i64, i64)> = result.iter()
+        .filter(|voc| voc.1 == bill_book_account.id)
+        .cloned()
+        .collect();
+        if acc.is_empty() {
+            let account_response = BillBookAccountResponse{ 
+                id: bill_book_account.id, 
+                name: bill_book_account.name.to_string(), 
+                icon_url: todo!(), 
+                amount: 0, 
+                account_type: todo!() 
+            };
+        }
+        else{
+            let account_response = BillBookAccountResponse{ 
+                id: bill_book_account.id, 
+                name: bill_book_account.name.to_string(), 
+                icon_url: todo!(), 
+                amount: acc.get(0).unwrap().0, 
+                account_type: todo!() 
+            };
+        }
+    }
+
+    return result;
+}
+
+fn get_bill_account_list(request: &BillAccountRequest) -> Vec<BillBookAccount>{
+    use crate::model::diesel::fortune::fortune_schema::bill_book_account as bill_book_account_table;
+    let source_query = bill_book_account_table::table
+        .filter(bill_book_account_table::dsl::bill_book_id.eq(request.bill_book_id));
+    let result = source_query.load::<BillBookAccount>(&get_connection());
     return result.unwrap();
 }
 
@@ -30,14 +58,14 @@ pub fn get_bill_book_account_list(request: &BillAccountRequest, login_user_info:
 /// numeric类型的数据在diesel里用PgNumeric来接收
 /// 但是不知道如何将PgNumeric的数据转换为BigDecimal
 /// https://stackoverflow.com/questions/72676400/how-to-get-the-exactly-value-from-the-pgnumeric
-pub fn get_bill_book_account_sum(request: &BillAccountRequest) -> Result<Vec<(i64, i32)>, diesel::result::Error>{
+pub fn get_bill_book_account_sum(request: &BillAccountRequest) -> Result<Vec<(i64, i64)>, diesel::result::Error>{
     use crate::diesel::GroupByDsl;
     use crate::model::diesel::fortune::fortune_schema::bill_record as bill_record_table;
     let source_query = bill_record_table::table
         .group_by(bill_record_table::account_id)
         .select((diesel::dsl::sql::<diesel::sql_types::BigInt>("SUM(CAST(amount AS Integer))"),bill_record_table::account_id))
         .filter(bill_record_table::dsl::bill_book_id.eq(request.bill_book_id));
-    let result = source_query.load::<(i64,i32)>(&get_connection());
+    let result = source_query.load::<(i64,i64)>(&get_connection());
     return result;
 }
 

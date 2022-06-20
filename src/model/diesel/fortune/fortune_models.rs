@@ -112,7 +112,7 @@ pub struct BillRecord {
     pub remark: Option<String>,
     pub amount: i64,
     pub bill_book_contents_id: i64,
-    pub account_id: i32,
+    pub account_id: i64,
 }
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]

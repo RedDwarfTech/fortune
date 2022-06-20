@@ -26,7 +26,7 @@ pub struct BillRecordAdd {
     pub updated_time: i64,
     pub deleted: i32,
     pub user_id: i64,
-    pub account_id: i32,
+    pub account_id: i64,
     pub bill_book_id: i64,
     pub bill_book_contents_id: i64,
     pub remark: Option<String>,
@@ -77,8 +77,8 @@ pub struct BillRecordUpdate {
     pub amount: Option<i64>
 }
 
-#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[derive(Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
 #[table_name = "bill_record"]
 pub struct BillRecordGroup {
-    pub account_id: i32,
+    pub account_id: i64,
 }

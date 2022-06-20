@@ -102,7 +102,7 @@ table! {
         remark -> Nullable<Varchar>,
         amount -> Int8,
         bill_book_contents_id -> Int8,
-        account_id -> Int4,
+        account_id -> Int8,
     }
 }
 
