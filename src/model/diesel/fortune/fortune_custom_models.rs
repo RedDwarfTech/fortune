@@ -82,3 +82,16 @@ pub struct BillRecordUpdate {
 pub struct BillRecordGroup {
     pub account_id: i64,
 }
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[table_name = "bill_book_account"]
+pub struct BillBookAccountAdd {
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub deleted: i32,
+    pub creator: i64,
+    pub remark: String,
+    pub account_id: i64,
+    pub name: String,
+    pub bill_book_id: i64,
+}

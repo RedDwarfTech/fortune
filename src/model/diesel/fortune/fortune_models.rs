@@ -8,6 +8,19 @@ use serde::Deserialize;
 use crate::model::diesel::fortune::fortune_schema::*;
 
 #[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
+#[table_name = "account"]
+pub struct Account {
+    pub id: i64,
+    pub created_time: i64,
+    pub updated_time: i64,
+    pub deleted: i32,
+    pub creator: i64,
+    pub remark: String,
+    pub account_type: i32,
+    pub name: String,
+}
+
+#[derive(Insertable,Queryable,QueryableByName,Debug,Serialize,Deserialize,Default,Clone)]
 #[table_name = "bill_book"]
 pub struct BillBook {
     pub id: i64,
@@ -29,7 +42,7 @@ pub struct BillBookAccount {
     pub deleted: i32,
     pub creator: i64,
     pub remark: String,
-    pub account_type: i32,
+    pub account_id: i64,
     pub name: String,
     pub bill_book_id: i64,
 }

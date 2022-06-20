@@ -3,9 +3,9 @@ use rocket::serde::json::Json;
 use rust_wheel::common::util::time_util::get_current_millisecond;
 use rust_wheel::config::db::config;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
-use crate::model::diesel::fortune::fortune_custom_models::{BillBookAdd, BillBookContentAdd, BillBookRoleAdd};
+use crate::model::diesel::fortune::fortune_custom_models::{BillBookAccountAdd, BillBookAdd, BillBookContentAdd, BillBookRoleAdd};
 
-use crate::model::diesel::fortune::fortune_models::{BillBook, BillBookTemplate, BillBookTemplateContent, Role};
+use crate::model::diesel::fortune::fortune_models::{Account, BillBook, BillBookTemplate, BillBookTemplateContent, Role};
 use crate::model::request::bill::book::bill_book_edit_request::BillBookEditRequest;
 use crate::model::request::bill::book::bill_book_request::BillBookRequest;
 use crate::utils::database::get_connection;
@@ -72,7 +72,7 @@ fn get_template_list_count_by_user_id(filter_user_id: &i64) -> i64{
 /// 不同的账本目录可自定义
 ///
 pub fn add_bill_book(request:&Json<BillBookRequest>, login_user_info: &LoginUserInfo) -> Result<BillBook, String> {
-    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
+    let connection = get_connection();
     let templates = get_template_list_by_id(request.billBookTemplateId);
     if templates.is_empty() {
         return Err("the template did not exists, check your template id first".parse().unwrap());
@@ -100,7 +100,6 @@ pub fn add_bill_book(request:&Json<BillBookRequest>, login_user_info: &LoginUser
 /// 初始化账本数据
 ///
 fn add_bill_book_impl(login_user_info: &LoginUserInfo, templates: &Vec<BillBookTemplate>, request:&Json<BillBookRequest>) -> Result<BillBook,diesel::result::Error>{
-    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let bill_book_record = BillBookAdd{
         created_time: get_current_millisecond(),
         updated_time: get_current_millisecond(),
@@ -112,13 +111,13 @@ fn add_bill_book_impl(login_user_info: &LoginUserInfo, templates: &Vec<BillBookT
     let inserted_record = diesel::insert_into(crate::model::diesel::fortune::fortune_schema::bill_book::table)
         .values(&bill_book_record)
         .on_conflict_do_nothing()
-        .get_results::<BillBook>(&connection);
+        .get_results::<BillBook>(&get_connection());
     let records = inserted_record.unwrap();
     // 使用to_owned()表示重新拷贝了一份数据，和重新构建一个String出来别无二致
-    let r = records.get(0).unwrap().to_owned();
-    add_bill_book_categories(&r,login_user_info);
-    add_bill_book_role(&r, login_user_info);
-    return Ok(r);
+    let new_bill_book = records.get(0).unwrap().to_owned();
+    add_bill_book_categories(&new_bill_book, login_user_info);
+    add_bill_book_role(&new_bill_book, login_user_info);
+    return Ok(new_bill_book);
 }
 
 ///
@@ -187,3 +186,32 @@ fn add_bill_book_role(bill_book: &BillBook, login_user_info: &LoginUserInfo){
         .unwrap();
 }
 
+///
+/// 初始化账本账户类型数据
+///
+fn add_bill_book_account(bill_book: &BillBook, login_user_info: &LoginUserInfo){
+    let connection = get_connection();
+    use crate::model::diesel::fortune::fortune_schema::account::dsl::*;
+    let categories_record = account
+        .load::<Account>(&connection)
+        .expect("error get categories contents");
+    let mut bill_book_roles:Vec<BillBookAccountAdd> = Vec::new();
+    for record in categories_record {
+        let bill_book_content = BillBookAccountAdd{
+            created_time: get_current_millisecond(),
+            updated_time: get_current_millisecond(),
+            deleted: 0,
+            creator: login_user_info.userId,
+            bill_book_id: bill_book.id,
+            remark: "".parse().unwrap(),
+            account_id: record.id,
+            name: record.name,
+        };
+        bill_book_roles.push(bill_book_content);
+    }
+    diesel::insert_into(crate::model::diesel::fortune::fortune_schema::bill_book_account::table)
+        .values(&bill_book_roles)
+        .on_conflict_do_nothing()
+        .execute(&connection)
+        .unwrap();
+}
