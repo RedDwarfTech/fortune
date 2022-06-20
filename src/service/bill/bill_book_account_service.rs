@@ -23,6 +23,7 @@ pub fn get_bill_book_account_list(request: &BillAccountRequest, login_user_info:
 ///
 /// diesel聚合查询遇到的问题：
 /// https://stackoverflow.com/questions/72670161/how-to-using-rust-diesel-to-do-the-group-by-query
+/// https://github.com/diesel-rs/diesel/discussions/3209
 /// 如何避免的方案：
 /// https://github.com/diesel-rs/diesel/issues/1781
 /// PostgreSQL里bigint求和返回的是numeric类型的数据

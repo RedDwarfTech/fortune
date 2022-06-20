@@ -72,7 +72,6 @@ pub fn create_server() -> Rocket<Build> {
     //let custom_route_spec = (vec![], custom_openapi_spec());
     mount_endpoints_and_merged_docs! {
         building_rocket, "/fortune".to_owned(), openapi_settings,
-        //"/external" => custom_route_spec,
         "/actuator" => health_controller::get_routes_and_docs(&openapi_settings),
         "/template" => bill_book_template_controller::get_routes_and_docs(&openapi_settings),
         "/contents" => contents_controller::get_routes_and_docs(&openapi_settings),
@@ -83,7 +82,6 @@ pub fn create_server() -> Rocket<Build> {
         "/role" => role_controller::get_routes_and_docs(&openapi_settings),
         "/permission" => permission_controller::get_routes_and_docs(&openapi_settings),
         "/bill-book-user" => bill_book_user_controller::get_routes_and_docs(&openapi_settings),
-        //"/message" => message::get_routes_and_docs(&openapi_settings),
     };
 
     building_rocket
