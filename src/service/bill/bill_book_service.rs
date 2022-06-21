@@ -117,6 +117,7 @@ fn add_bill_book_impl(login_user_info: &LoginUserInfo, templates: &Vec<BillBookT
     let new_bill_book = records.get(0).unwrap().to_owned();
     add_bill_book_categories(&new_bill_book, login_user_info);
     add_bill_book_role(&new_bill_book, login_user_info);
+    add_bill_book_account(&new_bill_book, login_user_info);
     return Ok(new_bill_book);
 }
 

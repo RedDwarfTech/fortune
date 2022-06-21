@@ -10,10 +10,9 @@ pub struct BillBookResponse {
     pub name: String,
     /// 图标地址
     pub icon_url: String,
-    /// 当前账户金额
-    pub amount: i64,
-    /// 账户类型
-    pub account_type: i32
+    /// 
+    pub bill_book_template_id: i64,
+    pub created_time: i64
 }
 
 impl From<&BillBook> for BillBookResponse {
@@ -22,8 +21,8 @@ impl From<&BillBook> for BillBookResponse {
             id: p.id,
             name: p.name.to_string(),
             icon_url: "".to_string(),
-            amount: todo!(),
-            account_type: todo!(),
+            bill_book_template_id: p.bill_book_template_id,
+            created_time: p.created_time
         }
     }
 }

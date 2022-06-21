@@ -13,6 +13,7 @@ use crate::model::request::contents::add_contents_request::AddContentsRequest;
 use crate::model::request::contents::del_contents_request::DelContentsRequest;
 use crate::model::request::contents::edit_contents_request::EditContentsRequest;
 use crate::model::response::contents::fortune_contents_response::FortuneContentResponse;
+use crate::utils::database::get_connection;
 
 ///
 /// 每个用户看到的菜单都不一样
@@ -129,11 +130,17 @@ pub fn del_book_contents<'a>(request: &'a Json<DelContentsRequest>, login_user_i
 
 fn delete_contents(ids: &Vec<i64>, filter_bill_book_id: &i64) -> Result<String, diesel::result::Error> {
     use crate::model::diesel::fortune::fortune_schema::bill_book_contents::dsl::*;
-    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let predicate = id.eq(any(&ids)).and(bill_book_id.eq(filter_bill_book_id));
-    diesel::delete(bill_book_contents.filter(predicate))
-        .execute(&connection);
-    Ok("ok".parse().unwrap())
+    let del_result = diesel::delete(bill_book_contents.filter(predicate))
+        .execute(&get_connection());
+    return match del_result {
+        Ok(v) => {
+            Ok("ok".to_string())
+        },
+        Err(_e) => {
+            Err(_e)
+        }
+    }
 }
 
 fn delete_bill_records(ids: &Vec<i64>, filter_bill_book_id: &i64) -> Result<String,diesel::result::Error> {

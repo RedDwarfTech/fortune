@@ -70,8 +70,15 @@ pub fn detail(query: BillDetailRequest) -> content::RawJson<String> {
 #[openapi(tag = "账单流水")]
 #[delete("/v1/delete?<query..>")]
 pub fn del(query: BillDelRequest, login_user_info: LoginUserInfo) -> content::RawJson<String> {
-    del_bill_record(&query, &login_user_info);
-    return box_rest_response("ok");
+    let del_result = del_bill_record(&query, &login_user_info);
+    return match del_result {
+        Ok(v) => {
+            box_rest_response(v)
+        },
+        Err(e) => {
+            box_rest_response(e.to_string())
+        }
+    }
 }
 
 /// # 编辑记账流水

@@ -77,7 +77,7 @@ pub fn recover_bill_record(query: &BillPageRequest){
     use crate::model::diesel::fortune::fortune_schema::bill_book as bill_book_table;
     let predicate = bill_book_table::id.eq(query.bill_book_id);
     diesel::update(bill_book.filter(predicate))
-        .set((archived.eq(1)))
+        .set(archived.eq(1))
         .execute(&connection)
         .expect("unable to update bill book contents");
 }
@@ -92,13 +92,13 @@ pub fn query_bill_record_detail(_request: &BillDetailRequest) -> BillRecord {
     return bill_record_result.unwrap();
 }
 
-pub fn del_bill_record(_request: &BillDelRequest, login_user_info: &LoginUserInfo) {
+pub fn del_bill_record(_request: &BillDelRequest, login_user_info: &LoginUserInfo) -> Result<usize, diesel::result::Error>{
     use crate::diesel::BoolExpressionMethods;
     let connection = get_connection();
     use crate::model::diesel::fortune::fortune_schema::bill_record as bill_record_table;
     let predicate = bill_record_table::id.eq(_request.id)
     .and(bill_record_table::user_id.eq(login_user_info.userId));
-    diesel::delete(bill_record_table::table.filter(predicate)).execute(&connection);
+    return diesel::delete(bill_record_table::table.filter(predicate)).execute(&connection);
 }
 
 pub fn edit_bill_record(request: &BillEditRequest, _login_user_info: &LoginUserInfo) {
@@ -121,7 +121,7 @@ pub fn archive_bill_book(_request: &BillBookArchiveRequest) {
     use crate::model::diesel::fortune::fortune_schema::bill_book as bill_book_table;
     let predicate = bill_book_table::id.eq(_request.bill_book_id);
     diesel::update(bill_book.filter(predicate))
-        .set((archived.eq(1)))
+        .set(archived.eq(1))
         .execute(&connection)
         .expect("unable to update bill book contents");
 }
