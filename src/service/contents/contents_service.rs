@@ -134,7 +134,7 @@ fn delete_contents(ids: &Vec<i64>, filter_bill_book_id: &i64) -> Result<String, 
     let del_result = diesel::delete(bill_book_contents.filter(predicate))
         .execute(&get_connection());
     return match del_result {
-        Ok(v) => {
+        Ok(_v) => {
             Ok("ok".to_string())
         },
         Err(_e) => {
@@ -145,13 +145,19 @@ fn delete_contents(ids: &Vec<i64>, filter_bill_book_id: &i64) -> Result<String, 
 
 fn delete_bill_records(ids: &Vec<i64>, filter_bill_book_id: &i64) -> Result<String,diesel::result::Error> {
     use crate::model::diesel::fortune::fortune_schema::bill_record::dsl::*;
-    let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let predicate = bill_book_contents_id.eq(any(&ids)).and(bill_book_id.eq(filter_bill_book_id));
-    let delete_result = diesel::delete(bill_record.filter(predicate)).execute(&connection);
-    Ok("ok".parse().unwrap())
+    let delete_result = diesel::delete(bill_record.filter(predicate)).execute(&get_connection());
+    return match delete_result {
+        Ok(_v) => {
+            Ok("ok".to_string())
+        },
+        Err(_e) => {
+            Err(_e)
+        }
+    }
 }
 
-pub fn edit_book_contents<'a>(request: &'a Json<EditContentsRequest>, login_user_info: &'a LoginUserInfo) -> Result<String, &'a str> {
+pub fn edit_book_contents<'a>(request: &'a Json<EditContentsRequest>) -> Result<String, &'a str> {
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     let transaction_result = connection.build_transaction()
         .repeatable_read()

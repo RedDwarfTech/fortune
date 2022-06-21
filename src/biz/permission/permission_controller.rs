@@ -15,8 +15,8 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 ///
 /// 查询权限列表
 #[openapi(tag = "权限")]
-#[post("/v1/page", data = "<request>")]
-pub fn page(request: Json<BillAddRequest>) -> content::RawJson<String> {
+#[post("/v1/page", data = "<_request>")]
+pub fn page(_request: Json<BillAddRequest>) -> content::RawJson<String> {
     return box_rest_response("contents");
 }
 

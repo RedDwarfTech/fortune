@@ -21,7 +21,7 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 /// 获取当前账本的分类目录，不同的账本模版分类目录不同。返回树形结构的数据。包括系统分类和用户自定义分类。
 #[openapi(tag = "账本分类目录")]
 #[get("/v1/tree?<query..>")]
-pub fn tree(query: ContentsRequest, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+pub fn tree(query: ContentsRequest) -> content::RawJson<String> {
     let contents = content_tree_query(query.contents_type, query.bill_book_id);
     return box_rest_response(contents);
 }
@@ -63,7 +63,7 @@ pub fn del_contents(request: Json<DelContentsRequest>, login_user_info: LoginUse
 // 而 PATCH 则对更为API化的数据更新操作，只需要更需要更新的字段（参看 RFC 5789 ）。
 #[openapi(tag = "账本分类目录")]
 #[patch("/v1/contents", data = "<request>")]
-pub fn edit_contents(request: Json<EditContentsRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
-    edit_book_contents(&request, &login_user_info).expect("TODO: panic message");
+pub fn edit_contents(request: Json<EditContentsRequest>) -> content::RawJson<String> {
+    edit_book_contents(&request).expect("TODO: panic message");
     return box_rest_response("ok");
 }

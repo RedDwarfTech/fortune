@@ -9,35 +9,38 @@ use crate::model::request::bill::book::bill_book_request::BillBookRequest;
 use crate::model::response::bill::bill_book_account_response::BillBookAccountResponse;
 use crate::utils::database::get_connection;
 
-pub fn get_bill_book_account_list(request: &BillAccountRequest) -> Vec<(i64, i64)>{
+pub fn get_bill_book_account_list(request: &BillAccountRequest) -> Vec<BillBookAccountResponse>{
     let bill_book_accounts = get_bill_account_list(request);
     let result = get_bill_book_account_sum(request).unwrap();
+    let bill_book_account_resp = Vec::new();
     for bill_book_account in bill_book_accounts.iter() {
         let acc:Vec<(i64, i64)> = result.iter()
         .filter(|voc| voc.1 == bill_book_account.id)
         .cloned()
         .collect();
         if acc.is_empty() {
-            let account_response = BillBookAccountResponse{ 
+            let account_resp = BillBookAccountResponse{ 
                 id: bill_book_account.id, 
                 name: bill_book_account.name.to_string(), 
                 icon_url: todo!(), 
                 amount: 0, 
                 account_type: todo!() 
             };
+            bill_book_account_resp.push(account_resp);
         }
         else{
-            let account_response = BillBookAccountResponse{ 
+            let account_resp = BillBookAccountResponse{ 
                 id: bill_book_account.id, 
                 name: bill_book_account.name.to_string(), 
                 icon_url: todo!(), 
-                amount: acc.get(0).unwrap().0, 
+                amount: 0, 
                 account_type: todo!() 
             };
+            bill_book_account_resp.push(account_resp);
         }
     }
 
-    return result;
+    return bill_book_account_resp;
 }
 
 fn get_bill_account_list(request: &BillAccountRequest) -> Vec<BillBookAccount>{
