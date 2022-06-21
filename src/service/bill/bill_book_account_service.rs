@@ -9,10 +9,17 @@ use crate::model::request::bill::book::bill_book_request::BillBookRequest;
 use crate::model::response::bill::bill_book_account_response::BillBookAccountResponse;
 use crate::utils::database::get_connection;
 
+/// https://stackoverflow.com/questions/72698557/the-rust-compiler-shows-the-variable-unused-even-the-variable-used-in-the-contex
+/// 为什么会出现变量未使用的警告？
+/// 实际变量是push到数组的
+/// 原因是数组bill_book_account_resp应该以mut修饰
+/// 为什么静态编译没有检查出来这个错误？
+/// 是因为代码里有todo()注解
+/// todo注解的代码是不会执行的
 pub fn get_bill_book_account_list(request: &BillAccountRequest) -> Vec<BillBookAccountResponse>{
     let bill_book_accounts = get_bill_account_list(request);
     let result = get_bill_book_account_sum(request).unwrap();
-    let bill_book_account_resp = Vec::new();
+    let mut bill_book_account_resp = Vec::new();
     for bill_book_account in bill_book_accounts.iter() {
         let acc:Vec<(i64, i64)> = result.iter()
         .filter(|voc| voc.1 == bill_book_account.id)
@@ -22,9 +29,9 @@ pub fn get_bill_book_account_list(request: &BillAccountRequest) -> Vec<BillBookA
             let account_resp = BillBookAccountResponse{ 
                 id: bill_book_account.id, 
                 name: bill_book_account.name.to_string(), 
-                icon_url: todo!(), 
+                icon_url: "".parse().unwrap(),
                 amount: 0, 
-                account_type: todo!() 
+                account_type: 1
             };
             bill_book_account_resp.push(account_resp);
         }
@@ -32,9 +39,9 @@ pub fn get_bill_book_account_list(request: &BillAccountRequest) -> Vec<BillBookA
             let account_resp = BillBookAccountResponse{ 
                 id: bill_book_account.id, 
                 name: bill_book_account.name.to_string(), 
-                icon_url: todo!(), 
+                icon_url: "".parse().unwrap(),
                 amount: 0, 
-                account_type: todo!() 
+                account_type: 1
             };
             bill_book_account_resp.push(account_resp);
         }

@@ -74,12 +74,11 @@ pub fn query_recoverable_records(query: &BillPageRequest) -> Vec<BillRecord>{
 }
 
 pub fn recover_bill_record(query: &BillPageRequest){
-    let connection = get_connection();
     use crate::model::diesel::fortune::fortune_schema::bill_book as bill_book_table;
     let predicate = bill_book_table::id.eq(query.bill_book_id);
     diesel::update(bill_book.filter(predicate))
         .set(archived.eq(1))
-        .execute(&connection)
+        .execute(&get_connection())
         .expect("unable to update bill book contents");
 }
 
@@ -118,11 +117,11 @@ pub fn edit_bill_record(request: &BillEditRequest, _login_user_info: &LoginUserI
 }
 
 pub fn archive_bill_book(_request: &BillBookArchiveRequest) {
-    let bill_book_account_resp = Vec::new();
+    let mut bill_book_account_resp = Vec::new();
     let account_resp = BillBookAccountResponse{ 
         id: 0, 
         name: "w".to_string(), 
-        icon_url: todo!(), 
+        icon_url: "".parse().unwrap(),
         amount: 0, 
         account_type: 1 
     };

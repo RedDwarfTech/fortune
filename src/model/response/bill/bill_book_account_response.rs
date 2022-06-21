@@ -22,8 +22,8 @@ impl From<&BillBookAccount> for BillBookAccountResponse {
             id: p.id,
             name: p.name.to_string(),
             icon_url: "".to_string(),
-            amount: todo!(),
-            account_type: todo!(),
+            amount: 1,
+            account_type: 1,
         }
     }
 }
