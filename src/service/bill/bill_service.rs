@@ -8,6 +8,7 @@ use crate::model::diesel::fortune::fortune_custom_models::BillRecordUpdate;
 use crate::model::request::bill::bill_del_request::BillDelRequest;
 use crate::model::request::bill::bill_edit_request::BillEditRequest;
 use crate::model::request::bill::book::bill_book_archive_request::BillBookArchiveRequest;
+use crate::model::response::bill::bill_book_account_response::BillBookAccountResponse;
 use crate::model::{request::bill::bill_add_request::BillAddRequest, diesel::fortune::fortune_custom_models::BillRecordAdd};
 use crate::model::diesel::fortune::fortune_models::{BillBook, BillRecord};
 use crate::model::diesel::fortune::fortune_schema::bill_book::archived;
@@ -117,6 +118,16 @@ pub fn edit_bill_record(request: &BillEditRequest, _login_user_info: &LoginUserI
 }
 
 pub fn archive_bill_book(_request: &BillBookArchiveRequest) {
+    let bill_book_account_resp = Vec::new();
+    let account_resp = BillBookAccountResponse{ 
+        id: 0, 
+        name: "w".to_string(), 
+        icon_url: todo!(), 
+        amount: 0, 
+        account_type: 1 
+    };
+    bill_book_account_resp.push(account_resp);
+
     let connection = config::connection("FORTUNE_DATABASE_URL".to_string());
     use crate::model::diesel::fortune::fortune_schema::bill_book as bill_book_table;
     let predicate = bill_book_table::id.eq(_request.bill_book_id);
