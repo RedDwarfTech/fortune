@@ -38,9 +38,11 @@ pub fn list(name: Option<String>, login_user_info: LoginUserInfo) -> content::Ra
 /// 查询账本详情
 #[openapi(tag = "账本")]
 #[get("/v1/detail/<id>")]
-pub fn detail(id: i64) -> content::RawJson<String> {
+pub fn detail(id: i64) -> Json<ApiResponse<BillBookResponse>> {
     let contents = get_bill_book_by_id(&id);
-    return box_rest_response(contents);
+    let bill_book_res  = BillBookResponse::from(&contents);
+    let boxed_response = box_type_rest_response(bill_book_res);
+    return Json::from(boxed_response);
 }
 
 /// # 编辑账本

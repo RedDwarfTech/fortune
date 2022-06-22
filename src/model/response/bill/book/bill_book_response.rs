@@ -12,6 +12,7 @@ pub struct BillBookResponse {
     pub icon_url: String,
     /// 
     pub bill_book_template_id: i64,
+    /// bill book created time
     pub created_time: i64
 }
 
