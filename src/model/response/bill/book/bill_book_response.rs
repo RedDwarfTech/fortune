@@ -10,9 +10,9 @@ pub struct BillBookResponse {
     pub name: String,
     /// 图标地址
     pub icon_url: String,
-    /// 
+    /// 账本模版ID
     pub bill_book_template_id: i64,
-    /// bill book created time
+    /// 账本创建时间
     pub created_time: i64
 }
 

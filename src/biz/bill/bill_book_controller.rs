@@ -6,11 +6,9 @@ go to Settings > Editor > Inspections > Rust > Lints > Unused Import, enable it,
 
 https://stackoverflow.com/questions/61077692/how-can-i-fix-unused-imports-in-rust-automatically
 **/
-
-use rocket::response::content;
 use rocket::serde::json::Json;
 use rocket_okapi::settings::OpenApiSettings;
-use rust_wheel::common::util::model_convert::{box_rest_response, box_type_rest_response};
+use rust_wheel::common::util::model_convert::{box_type_rest_response, map_entity};
 use rocket_okapi::{openapi, openapi_get_routes_spec};
 use rust_wheel::model::response::api_response::ApiResponse;
 use rust_wheel::model::user::login_user_info::LoginUserInfo;
@@ -28,9 +26,11 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 /// 查询当前用户所属的账本，前期查询当前用户创建的账本，后期可查询用户创建的和参与的账本
 #[openapi(tag = "账本")]
 #[get("/v1/list?<name>")]
-pub fn list(name: Option<String>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+pub fn list(name: Option<String>, login_user_info: LoginUserInfo) -> Json<ApiResponse<Vec<BillBookResponse>>> {
     let contents = get_bill_book_list(name,&login_user_info);
-    return box_rest_response(contents);
+    let map_result = map_entity(contents);
+    let boxed_result = box_type_rest_response(map_result);
+    return Json::from(boxed_result);
 }
 
 /// # 查询账本详情
@@ -62,15 +62,16 @@ pub fn edit(request: Json<BillBookEditRequest>) -> Json<ApiResponse<BillBookResp
 /// 新增不同类型的账本
 #[openapi(tag = "账本")]
 #[post("/v1/add", data = "<request>")]
-pub fn add(request: Json<BillBookRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+pub fn add(request: Json<BillBookRequest>, login_user_info: LoginUserInfo) -> Json<ApiResponse<Option<BillBookResponse>>> {
     let bill_book = add_bill_book(&request, &login_user_info);
     return match bill_book {
         Ok(v) => {
-            box_rest_response(v)
+            let bill_book_response = BillBookResponse::from(&v);
+            let bill_book_boxed = box_type_rest_response(Some(bill_book_response));
+            Json::from(bill_book_boxed)
         },
-        Err(e) => {
-            box_rest_response(e.to_string())
+        Err(_e) => {
+            Json::from(box_type_rest_response(None))
         }
     }
 }
-
