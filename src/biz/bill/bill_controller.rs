@@ -33,14 +33,16 @@ pub fn get_routes_and_docs(settings: &OpenApiSettings) -> (Vec<rocket::Route>, O
 /// 新增记账流水
 #[openapi(tag = "账单流水")]
 #[post("/v1/add", data = "<request>")]
-pub fn add(request: Json<BillAddRequest>, login_user_info: LoginUserInfo) -> content::RawJson<String> {
+pub fn add(request: Json<BillAddRequest>, login_user_info: LoginUserInfo) -> Json<ApiResponse<Option<BillRecordResponse>>> {
     let contents = add_bill(request, &login_user_info);
     return match contents {
         Ok(v) => {
-            box_rest_response(v)
+            let response = BillRecordResponse::from(&v);
+            let boxed_response = box_type_rest_response(Some(response));
+            Json::from(boxed_response)
         },
         Err(e) => {
-            box_rest_response(e.to_string())
+            Json::from(box_type_rest_response(None))
         }
     }
 }
